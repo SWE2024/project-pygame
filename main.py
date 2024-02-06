@@ -30,8 +30,12 @@ btnExit = pygame.image.load(current_path + '/assets/btnExit.png')
 btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png')
 btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png')
 btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png')
+btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png')
+btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png')
+btnBack= pygame.image.load(current_path + '/assets/btnBack.png')
+btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png')
 
-mixer.music.load(current_path +'/assets/background.mp3')
+mixer.music.load(current_path +'/assets/background_music.mp3')
 mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.03)
 
@@ -69,6 +73,44 @@ class UI:
         screen.blit(self.text, (screen.get_width() - self.text_width, 0))
         self.icon = pygame.transform.scale(icon, (50, 50))
         screen.blit(self.icon, (5, screen.get_height() - 55)) # offset by 5px so it is not stuck in the bottom left
+
+    def menu_settings(self):
+        global screen, running
+        while True:
+            screen.fill("black")
+
+            current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+            screen.blit(current_background, (0, 0))
+
+            areaAudioBtn = pygame.Rect(screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5, 305, 95)
+            screen.blit(btnAudio, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5))
+
+            areaBackBtn = pygame.Rect(screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5, 305, 95)
+            screen.blit(btnBack, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5))
+
+            cursor_pos = pygame.mouse.get_pos()
+            if areaAudioBtn.collidepoint(cursor_pos):
+                screen.blit(btnAudioHover, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5))
+            elif areaBackBtn.collidepoint(cursor_pos):
+                screen.blit(btnBackHover, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    return
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K.ESCAPE:
+                        self.current_page = self.menu
+                    return
+
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if areaBackBtn.collidepoint(event.pos):
+                        self.current_page = self.menu
+                        return
+
+            pygame.display.flip()
+
 
     #this the method to render the menu scene
     def menu(self):
@@ -125,7 +167,8 @@ class UI:
                         running = False
                         return
                     if areaSettingsBtn.collidepoint(event.pos):
-                        print("setting button pressed")
+                        self.current_page = self.menu_settings
+                        return
 
 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
