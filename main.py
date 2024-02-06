@@ -2,7 +2,6 @@
 import pygame
 import os
 from pygame import mixer;
-from enum import Enum
 
 # pygame setup
 pygame.init()

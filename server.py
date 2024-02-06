@@ -8,26 +8,26 @@ server = None
 def get_private_ip():
     system = platform.system()
     if system == "Windows":
-        command = []
+        address = socket.gethostbyname(socket.gethostname())
     elif system == "Linux":
-        command = ['hostname', '-I']
+        address = subprocess.run(['hostname', '-I'], capture_output=True).stdout.decode('utf-8').strip()
     elif system == "Darwin":
-        command = []
+        command1 = ["ifconfig" ,"en0"]
+        process1 = subprocess.Popen(command1, stdout=subprocess.PIPE)
+        process1.wait()
+        output = process1. communicate()[0].decode('utf-8')
+        process1.stdout.close()
 
-    address = subprocess.run(command, capture_output=True).stdout.decode('utf-8').strip()
+        index = output.find('inet ') + len('inet ')
+        output = output[index:].split(' ')
+        address = output[0]
+        
     return address
 
 def start():
     server.listen()
-    print(f'[Listening] Server is listening on {get_private_ip()}')
+    print(f'[Listening] Server is listening on {server.getsockname()}')
     while True:
-        try:
-            pass
-        except KeyboardInterrupt:
-            print("server shutting down")
-            server.close()
-            quit()
-
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
@@ -37,13 +37,6 @@ def handle_client(conn, addr):
     print(f'[New Connection] {addr} connected')
     connected = True
     while connected:
-        try:
-            pass
-        except KeyboardInterrupt:
-            print("server shutting down")
-            conn.close()
-            server.close()
-            quit()
 
         msg_length = conn.recv(64).decode('utf-8')
         if msg_length:
@@ -57,6 +50,7 @@ def handle_client(conn, addr):
     conn.close()
 
 if __name__ == "__main__":
+    print(get_private_ip())
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((get_private_ip(), 5050))
     start()

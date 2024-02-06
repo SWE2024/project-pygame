@@ -11,9 +11,10 @@ def send(msg):
 
 
 
-
+ip = "10.2.120.58"
+# ip = get_private_ip()
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((get_private_ip(), 5050))
+client.connect((ip, 5050))
 
 
 while True:
