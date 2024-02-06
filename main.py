@@ -98,11 +98,6 @@ class UI:
                     running = False
                     return
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K.ESCAPE:
-                        self.current_page = self.menu
-                    return
-
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if areaBackBtn.collidepoint(event.pos):
                         self.current_page = self.menu
