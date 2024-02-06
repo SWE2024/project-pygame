@@ -31,7 +31,7 @@ btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png')
 btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png')
 btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png')
 
-mixer.music.load(current_path +'/assets/background.mp3')
+mixer.music.load(current_path +'/assets/background_music.mp3')
 mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.03)
 
