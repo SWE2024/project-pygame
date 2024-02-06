@@ -75,7 +75,6 @@ class UI:
         screen.blit(self.icon, (5, screen.get_height() - 55)) # offset by 5px so it is not stuck in the bottom left
 
     def menu_settings(self):
-        global screen, running
         while True:
             screen.fill("black")
 
