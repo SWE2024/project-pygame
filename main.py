@@ -37,7 +37,7 @@ btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png')
 
 mixer.music.load(current_path +'/assets/background_music.mp3')
 mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.03)
+pygame.mixer.music.set_volume(0.5)
 
 clock = pygame.time.Clock()
 dt = 0
@@ -74,38 +74,6 @@ class UI:
         self.icon = pygame.transform.scale(icon, (50, 50))
         screen.blit(self.icon, (5, screen.get_height() - 55)) # offset by 5px so it is not stuck in the bottom left
 
-    def menu_settings(self):
-        while True:
-            screen.fill("black")
-
-            current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
-            screen.blit(current_background, (0, 0))
-
-            areaAudioBtn = pygame.Rect(screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5, 305, 95)
-            screen.blit(btnAudio, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5))
-
-            areaBackBtn = pygame.Rect(screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5, 305, 95)
-            screen.blit(btnBack, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5))
-
-            cursor_pos = pygame.mouse.get_pos()
-            if areaAudioBtn.collidepoint(cursor_pos):
-                screen.blit(btnAudioHover, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5))
-            elif areaBackBtn.collidepoint(cursor_pos):
-                screen.blit(btnBackHover, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5))
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    return
-
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if areaBackBtn.collidepoint(event.pos):
-                        self.current_page = self.menu
-                        return
-
-            pygame.display.flip()
-
-
     #this the method to render the menu scene
     def menu(self):
         #the screen and running variable are defined global
@@ -113,6 +81,8 @@ class UI:
         global screen, running
         while True:
             screen.fill("black")
+            dt = clock.tick(165) / 1000 # limit fps to 165 in game
+
             current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
             screen.blit(current_background, (0, 0))
 
@@ -172,18 +142,68 @@ class UI:
                     else: 
                         screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
                         self.fullscreen = True
-
+            
+            fps.render(screen) # comment to remove the fps count
             pygame.display.flip()
-            dt = clock.tick(60) / 1000 # limit fps to 60 in menu
     
+    def menu_settings(self):
+        global screen, running
+        while True:
+            screen.fill("black")
+            dt = clock.tick(165) / 1000 # limit fps to 165 in game
+
+            current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+            current_background.set_alpha(60)
+            screen.blit(current_background, (0, 0))
+
+            areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
+            screen.blit(btnAudio, (screen.get_width() - 289 - 5, 132))
+
+            areaBackBtn = pygame.Rect(screen.get_width() - 289 - 5, 222, 289, 90)
+            screen.blit(btnBack, (screen.get_width() - 289 - 5, 222))
+
+            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122) # offset 10px from the edge of the screen
+            screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
+
+            cursor_pos = pygame.mouse.get_pos()
+            if areaAudioBtn.collidepoint(cursor_pos):
+                screen.blit(btnAudioHover, (screen.get_width() - 289 - 5, 132))
+            elif areaBackBtn.collidepoint(cursor_pos):
+                screen.blit(btnBackHover, (screen.get_width() - 289 - 5, 222))
+            elif areaSettingsBtn.collidepoint(cursor_pos):
+                screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    return
+
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if areaAudioBtn.collidepoint(event.pos):
+                        volume = mixer.music.get_volume()
+                        if volume > 0:
+                            mixer.music.set_volume(0)
+                        else:
+                            mixer.music.set_volume(0.5)
+                        return
+                    
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if areaBackBtn.collidepoint(event.pos) or areaSettingsBtn.collidepoint(event.pos):
+                        self.current_page = self.menu
+                        return
+            
+            fps.render(screen) # comment to remove the fps count
+            pygame.display.flip()
+
     def game(self):
         global running, screen
         player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
         while True:
             screen.fill("black")
-            pygame.draw.circle(screen, "red", player_pos, 33)
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
+
+            pygame.draw.circle(screen, "red", player_pos, 33)
 
             keys = pygame.key.get_pressed()
 
