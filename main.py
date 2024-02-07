@@ -19,11 +19,13 @@ init_screen = False
 
 # file system setup
 current_path = os.path.dirname(__file__)
-icon = pygame.image.load(current_path + '/assets/appIcon.png')
+icon = pygame.image.load(current_path + '/assets/imgIco.png')
 pygame.display.set_caption('Moving Circles Concept App')
 pygame.display.set_icon(icon)
+
 current_background = None
-original_background = pygame.image.load(current_path + '/assets/background.jpg')
+original_background = pygame.image.load(current_path + '/assets/imgBackground.jpg')
+
 btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png')
 btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png')
 btnExit = pygame.image.load(current_path + '/assets/btnExit.png')
@@ -35,7 +37,7 @@ btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png')
 btnBack= pygame.image.load(current_path + '/assets/btnBack.png')
 btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png')
 
-mixer.music.load(current_path +'/assets/startup_music.mp3')
+mixer.music.load(current_path +'/assets/musicStartup.mp3')
 mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.33)
 
