@@ -35,7 +35,7 @@ btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png')
 btnBack= pygame.image.load(current_path + '/assets/btnBack.png')
 btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png')
 
-mixer.music.load(current_path +'/assets/background_music.mp3')
+mixer.music.load(current_path +'/assets/startup_music.mp3')
 mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.5)
 
