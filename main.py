@@ -1,5 +1,5 @@
-# Example file showing a circle moving on screen
 import pygame
+# import cProfile # for profiling, use later
 import os
 from pygame import mixer;
 
@@ -11,8 +11,8 @@ display_info = pygame.display.Info()
 display_width = display_info.current_w
 display_height = display_info.current_h
 
-#choose here whether to start in resizable or fullscreen
-screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+# choose here whether to start in resizable or fullscreen
+screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
 # screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fs
 
 init_screen = False
@@ -37,7 +37,7 @@ btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png')
 
 mixer.music.load(current_path +'/assets/startup_music.mp3')
 mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(0.33)
 
 clock = pygame.time.Clock()
 dt = 0
@@ -117,7 +117,7 @@ class UI:
                 running = False
                 return
 
-            fps.render(screen) # comment to remove the fps count
+            # fps.render(screen) # comment to remove the fps count
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -132,16 +132,26 @@ class UI:
                         running = False
                         return
                     if areaSettingsBtn.collidepoint(event.pos):
+                        screen.fill("black")
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip() 
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE opening the menu
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
                         self.current_page = self.menu_settings
                         return
 
 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = False
                     else: 
-                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = True
             
             pygame.display.flip()
@@ -149,12 +159,7 @@ class UI:
     def menu_settings(self):
         global screen, running
         while True:
-            screen.fill("black")
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
-
-            current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
-            current_background.set_alpha(60) # massive impact on performance
-            screen.blit(current_background, (0, 0))
 
             areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
             screen.blit(btnAudio, (screen.get_width() - 289 - 5, 132))
@@ -184,16 +189,18 @@ class UI:
                         if volume > 0:
                             mixer.music.set_volume(0)
                         else:
-                            mixer.music.set_volume(0.5)
+                            mixer.music.set_volume(0.33)
                         return
                     
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if areaBackBtn.collidepoint(event.pos) or areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.menu
                         return
-            
-            fps.render(screen) # comment to remove the fps count
-            pygame.display.flip()
+
+            """
+            render 'update' only the button area, to improve performance and reduce unnecessary rendering
+            """
+            pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 322))
 
     def game(self):
         global running, screen
@@ -233,11 +240,11 @@ class UI:
                 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = False
                         return
                     else: 
-                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = True
                         return
 
