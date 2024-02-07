@@ -42,6 +42,13 @@ pygame.mixer.music.set_volume(0.5)
 clock = pygame.time.Clock()
 dt = 0
 
+#music switch function
+def change_music(music_path):
+    mixer.music.unload()
+    mixer.music.load(music_path)
+    mixer.music.play(-1)
+    mixer.music.set_volume(0.3)
+
 class FPS:
     def __init__(self):
         self.font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
@@ -79,6 +86,10 @@ class UI:
         #the screen and running variable are defined global
         #the initialization of these variables do not exist in this scope rather outside it.
         global screen, running
+
+        #load menu music
+        change_music(current_path + '/assets/startup_music.mp3')
+
         while True:
             screen.fill("black")
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
@@ -199,6 +210,8 @@ class UI:
         global running, screen
         player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
+        change_music(current_path + '/assets/background.mp3')
+        
         while True:
             screen.fill("black")
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
