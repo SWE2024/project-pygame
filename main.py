@@ -12,7 +12,7 @@ display_width = display_info.current_w
 display_height = display_info.current_h
 
 #choose here whether to start in resizable or fullscreen
-screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE)
+screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
 # screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fs
 
 init_screen = False
@@ -117,6 +117,7 @@ class UI:
                 running = False
                 return
 
+            fps.render(screen) # comment to remove the fps count
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -137,13 +138,12 @@ class UI:
 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE)
+                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = False
                     else: 
-                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = True
             
-            fps.render(screen) # comment to remove the fps count
             pygame.display.flip()
     
     def menu_settings(self):
@@ -153,7 +153,7 @@ class UI:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
             current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
-            current_background.set_alpha(60)
+            current_background.set_alpha(60) # massive impact on performance
             screen.blit(current_background, (0, 0))
 
             areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
@@ -233,11 +233,11 @@ class UI:
                 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE)
+                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = False
                         return
                     else: 
-                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = True
                         return
 
