@@ -4,6 +4,7 @@ import os
 from pygame import mixer;
 
 # pygame setup
+pygame.mixer.pre_init(44100, 16, 2, 4096)
 pygame.init()
 
 # screen setup
@@ -19,23 +20,23 @@ init_screen = False
 
 # file system setup
 current_path = os.path.dirname(__file__)
-icon = pygame.image.load(current_path + '/assets/imgIco.png')
+icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
 pygame.display.set_caption('Moving Circles Concept App')
 pygame.display.set_icon(icon)
 
 current_background = None
-original_background = pygame.image.load(current_path + '/assets/imgBackground.jpg')
+original_background = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
 
-btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png')
-btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png')
-btnExit = pygame.image.load(current_path + '/assets/btnExit.png')
-btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png')
-btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png')
-btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png')
-btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png')
-btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png')
-btnBack= pygame.image.load(current_path + '/assets/btnBack.png')
-btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png')
+btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png').convert_alpha()
+btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png').convert_alpha()
+btnExit = pygame.image.load(current_path + '/assets/btnExit.png').convert_alpha()
+btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png').convert_alpha()
+btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png').convert_alpha()
+btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png').convert_alpha()
+btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png').convert_alpha()
+btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png').convert_alpha()
+btnBack= pygame.image.load(current_path + '/assets/btnBack.png').convert_alpha()
+btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png').convert_alpha()
 
 mixer.music.load(current_path +'/assets/musicStartup.mp3')
 mixer.music.play(-1)
@@ -81,8 +82,7 @@ class UI:
         #the screen and running variable are defined global
         #the initialization of these variables do not exist in this scope rather outside it.
         global screen, running
-        while True:
-            screen.fill("black")
+        while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
             current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
@@ -118,8 +118,6 @@ class UI:
             elif keys[pygame.K_ESCAPE]:
                 running = False
                 return
-
-            # fps.render(screen) # comment to remove the fps count
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -160,7 +158,7 @@ class UI:
     
     def menu_settings(self):
         global screen, running
-        while True:
+        while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
             areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
@@ -208,7 +206,7 @@ class UI:
         global running, screen
         player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
-        while True:
+        while 1:
             screen.fill("black")
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
