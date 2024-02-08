@@ -1,9 +1,10 @@
-# Example file showing a circle moving on screen
 import pygame
+# import cProfile # for profiling, use later
 import os
 from pygame import mixer;
 
 # pygame setup
+pygame.mixer.pre_init(44100, 16, 2, 4096)
 pygame.init()
 
 # screen setup
@@ -11,33 +12,35 @@ display_info = pygame.display.Info()
 display_width = display_info.current_w
 display_height = display_info.current_h
 
-#choose here whether to start in resizable or fullscreen
-screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE)
+# choose here whether to start in resizable or fullscreen
+screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
 # screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fs
 
 init_screen = False
 
 # file system setup
 current_path = os.path.dirname(__file__)
-icon = pygame.image.load(current_path + '/assets/appIcon.png')
+icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
 pygame.display.set_caption('Moving Circles Concept App')
 pygame.display.set_icon(icon)
-current_background = None
-original_background = pygame.image.load(current_path + '/assets/background.jpg')
-btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png')
-btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png')
-btnExit = pygame.image.load(current_path + '/assets/btnExit.png')
-btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png')
-btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png')
-btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png')
-btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png')
-btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png')
-btnBack= pygame.image.load(current_path + '/assets/btnBack.png')
-btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png')
 
-mixer.music.load(current_path +'/assets/startup_music.mp3')
+current_background = None
+original_background = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
+
+btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png').convert_alpha()
+btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png').convert_alpha()
+btnExit = pygame.image.load(current_path + '/assets/btnExit.png').convert_alpha()
+btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png').convert_alpha()
+btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png').convert_alpha()
+btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png').convert_alpha()
+btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png').convert_alpha()
+btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png').convert_alpha()
+btnBack= pygame.image.load(current_path + '/assets/btnBack.png').convert_alpha()
+btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png').convert_alpha()
+
+mixer.music.load(current_path +'/assets/musicStartup.mp3')
 mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.set_volume(0.33)
 
 clock = pygame.time.Clock()
 dt = 0
@@ -79,8 +82,7 @@ class UI:
         #the screen and running variable are defined global
         #the initialization of these variables do not exist in this scope rather outside it.
         global screen, running
-        while True:
-            screen.fill("black")
+        while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
             current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
@@ -117,7 +119,6 @@ class UI:
                 running = False
                 return
 
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -131,30 +132,34 @@ class UI:
                         running = False
                         return
                     if areaSettingsBtn.collidepoint(event.pos):
+                        screen.fill("black")
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip() 
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE opening the menu
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
                         self.current_page = self.menu_settings
                         return
 
 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE)
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = False
                     else: 
-                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = True
             
-            fps.render(screen) # comment to remove the fps count
             pygame.display.flip()
     
     def menu_settings(self):
         global screen, running
-        while True:
-            screen.fill("black")
+        while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
-
-            current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
-            current_background.set_alpha(60)
-            screen.blit(current_background, (0, 0))
 
             areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
             screen.blit(btnAudio, (screen.get_width() - 289 - 5, 132))
@@ -184,22 +189,24 @@ class UI:
                         if volume > 0:
                             mixer.music.set_volume(0)
                         else:
-                            mixer.music.set_volume(0.5)
+                            mixer.music.set_volume(0.33)
                         return
                     
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     if areaBackBtn.collidepoint(event.pos) or areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.menu
                         return
-            
-            fps.render(screen) # comment to remove the fps count
-            pygame.display.flip()
+
+            """
+            render 'update' only the button area, to improve performance and reduce unnecessary rendering
+            """
+            pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 322))
 
     def game(self):
         global running, screen
         player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
-        while True:
+        while 1:
             screen.fill("black")
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
@@ -233,11 +240,11 @@ class UI:
                 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((700, 500), pygame.RESIZABLE)
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = False
                         return
                     else: 
-                        screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = True
                         return
 

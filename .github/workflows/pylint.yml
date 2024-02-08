@@ -3,7 +3,7 @@ name: Pylint
 on: [push]
 
 jobs:
-  build:
+  pylint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -14,11 +14,11 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Install Project Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pygame
         pip install pylint
-    - name: Analysing the code with Pylint
+    - name: Analyse code with Pylint
       run: |
         pylint $(git ls-files '*.py') --errors-only --extension-pkg-whitelist=pygame
