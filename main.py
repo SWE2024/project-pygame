@@ -91,7 +91,7 @@ class UI:
         global screen, running
 
         #load menu music
-        change_music(current_path + '/assets/startup_music.mp3')
+        change_music(current_path + '/assets/musicStartup.mp3')
 
         while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
@@ -217,7 +217,7 @@ class UI:
         global running, screen
         player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
-        change_music(current_path + '/assets/background.mp3')
+        change_music(current_path + '/assets/musicBackground.mp3')
         
         while 1:
             screen.fill("black")
