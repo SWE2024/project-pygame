@@ -158,6 +158,7 @@ class UI:
     
     def menu_settings(self):
         global screen, running
+
         while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
@@ -196,9 +197,39 @@ class UI:
                     if areaBackBtn.collidepoint(event.pos) or areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.menu
                         return
+                    
+                if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
+                    if self.fullscreen: 
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip() 
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE fullscreening
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
+                        self.fullscreen = False
+                        return
+                    else: 
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
+                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip() 
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE fullscreening
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
+                        self.fullscreen = True
+                        return
 
             """
-            render 'update' only the button area, to improve performance and reduce unnecessary rendering
+            render only the button area, to improve performance and reduce unnecessary rendering
             """
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 322))
 
