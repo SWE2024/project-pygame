@@ -6,6 +6,7 @@ from pygame import mixer;
 # pygame setup
 pygame.mixer.pre_init(44100, 16, 2, 4096)
 pygame.init()
+pygame.mixer.music.set_volume(0.33)
 
 # screen setup
 display_info = pygame.display.Info()
@@ -14,9 +15,9 @@ display_height = display_info.current_h
 
 # choose here whether to start in resizable or fullscreen
 screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
-# screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fs
 
-init_screen = False
+# screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fullscreen
+init_fullscreen = False # set to true if beginning in fulscreen
 
 # file system setup
 current_path = os.path.dirname(__file__)
@@ -37,10 +38,6 @@ btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png').convert_alph
 btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png').convert_alpha()
 btnBack= pygame.image.load(current_path + '/assets/btnBack.png').convert_alpha()
 btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png').convert_alpha()
-
-mixer.music.load(current_path +'/assets/musicStartup.mp3')
-mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.33)
 
 clock = pygame.time.Clock()
 dt = 0
@@ -75,7 +72,10 @@ class UI:
     def __init__(self):
         self.font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
         self.current_page = self.menu
-        self.fullscreen = init_screen
+        self.fullscreen = init_fullscreen
+
+        # load startup music
+        change_music(current_path + '/assets/musicMenu.mp3')
     
     def render(self, screen):
         self.text = self.font.render('TAB to LEAVE | ESC to QUIT', True, (255, 255, 255))
@@ -89,9 +89,6 @@ class UI:
         #the screen and running variable are defined global
         #the initialization of these variables do not exist in this scope rather outside it.
         global screen, running
-
-        #load menu music
-        change_music(current_path + '/assets/musicStartup.mp3')
 
         while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
@@ -248,6 +245,7 @@ class UI:
         global running, screen
         player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
+        # load game music
         change_music(current_path + '/assets/musicBackground.mp3')
 
         while 1:
@@ -268,6 +266,8 @@ class UI:
                 player_pos.x += 500 * dt
             if (keys[pygame.K_TAB]):
                 self.current_page = self.menu
+                # load menu music
+                change_music(current_path + '/assets/musicMenu.mp3')
                 return
             if (keys[pygame.K_ESCAPE]):
                 running = False
