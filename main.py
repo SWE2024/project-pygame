@@ -14,7 +14,7 @@ display_width = display_info.current_w
 display_height = display_info.current_h
 
 # choose here whether to start in resizable or fullscreen
-screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
+screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN, vsync = 0)
 
 # screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fullscreen
 init_fullscreen = True # set to true if beginning in fulscreen
@@ -25,8 +25,8 @@ icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
 pygame.display.set_caption('World Conquest')
 pygame.display.set_icon(icon)
 
-current_background = None
 original_background = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
+current_background = None
 
 btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png').convert_alpha()
 btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png').convert_alpha()
@@ -90,10 +90,11 @@ class UI:
         #the initialization of these variables do not exist in this scope rather outside it.
         global screen, running
 
+        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+
         while 1:
             dt = clock.tick(165) / 1000 # limit fps to 165 in game
 
-            current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
             screen.blit(current_background, (0, 0))
 
             areaPlayBtn = pygame.Rect(screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5, 305, 95)
@@ -156,10 +157,12 @@ class UI:
 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0)
+                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
                         self.fullscreen = False
                     else: 
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync = 0)
+                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
                         self.fullscreen = True
             
             fps.render(screen)
@@ -209,7 +212,7 @@ class UI:
                     
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0)
                         current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
@@ -223,7 +226,7 @@ class UI:
                         self.fullscreen = False
                         return
                     else: 
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync = 0)
                         current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
@@ -288,11 +291,11 @@ class UI:
                 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
-                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0)
                         self.fullscreen = False
                         return
                     else: 
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
+                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync = 0)
                         self.fullscreen = True
                         return
 
