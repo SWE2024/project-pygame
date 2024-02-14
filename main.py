@@ -14,15 +14,15 @@ display_width = display_info.current_w
 display_height = display_info.current_h
 
 # choose here whether to start in resizable or fullscreen
-screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE | pygame.DOUBLEBUF, vsync = 0)
+screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
 
 # screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fullscreen
-init_fullscreen = False # set to true if beginning in fulscreen
+init_fullscreen = True # set to true if beginning in fulscreen
 
 # file system setup
 current_path = os.path.dirname(__file__)
 icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
-pygame.display.set_caption('Moving Circles Concept App')
+pygame.display.set_caption('World Conquest')
 pygame.display.set_icon(icon)
 
 current_background = None
