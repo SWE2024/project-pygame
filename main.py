@@ -1,8 +1,10 @@
 import pygame
-# import cProfile # for profiling, use later
 import os
 from pygame import mixer;
 
+"""
+SETUP CODE
+"""
 # pygame setup
 pygame.mixer.pre_init(44100, 16, 2, 4096)
 pygame.init()
@@ -42,7 +44,9 @@ current_background = None
 clock = pygame.time.Clock()
 dt = 0
 
-#music switch function
+"""
+GAME CODE
+"""
 def change_music(music_path):
     mixer.music.unload()
     mixer.music.load(music_path)
