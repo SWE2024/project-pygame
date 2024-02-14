@@ -54,7 +54,7 @@ class FPS:
         self.font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
     
     def render(self, screen):
-        self.text = self.font.render('FPS: ' + str(round(clock.get_fps(), 1)), True, (255, 255, 255))
+        self.text = self.font.render('FPS: ' + str(round(clock.get_fps())), True, (255, 255, 255))
         screen.blit(self.text, (0, 0))
 
 class UI:
@@ -162,6 +162,7 @@ class UI:
                         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN | pygame.DOUBLEBUF, vsync = 0)
                         self.fullscreen = True
             
+            fps.render(screen)
             pygame.display.flip()
     
     def menu_settings(self):
@@ -239,6 +240,9 @@ class UI:
             """
             render only the button area, to improve performance and reduce unnecessary rendering
             """
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25)) # prevents FPS values overlapping
+            fps.render(screen)
+            pygame.display.update(pygame.Rect(0, 0, 100, 25))
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 322))
 
     def game(self):
