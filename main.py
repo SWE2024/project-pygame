@@ -25,9 +25,6 @@ icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
 pygame.display.set_caption('World Conquest')
 pygame.display.set_icon(icon)
 
-original_background = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
-current_background = None
-
 btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png').convert_alpha()
 btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png').convert_alpha()
 btnExit = pygame.image.load(current_path + '/assets/btnExit.png').convert_alpha()
@@ -38,6 +35,9 @@ btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png').convert_alph
 btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png').convert_alpha()
 btnBack= pygame.image.load(current_path + '/assets/btnBack.png').convert_alpha()
 btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png').convert_alpha()
+imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
+imgBackground = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
+current_background = None
 
 clock = pygame.time.Clock()
 dt = 0
@@ -70,7 +70,7 @@ class UI:
     fullscreen_key = pygame.K_f
 
     def __init__(self):
-        self.font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
+        self.font = pygame.font.SysFont("kalinga", 32)
         self.current_page = self.menu
         self.fullscreen = init_fullscreen
 
@@ -90,27 +90,29 @@ class UI:
         #the initialization of these variables do not exist in this scope rather outside it.
         global screen, running
 
-        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+        current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
 
         while 1:
-            dt = clock.tick(165) / 1000 # limit fps to 165 in game
+            dt = clock.tick(165) * 0.001 # limit fps to 165 in game
 
             screen.blit(current_background, (0, 0))
 
-            areaPlayBtn = pygame.Rect(screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5, 305, 95)
-            screen.blit(btnPlay, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5))
+            screen.blit(imgLogo, (screen.get_width() * 0.5 - 375, 10))
 
-            areaExitBtn = pygame.Rect(screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5, 305, 95)
-            screen.blit(btnExit, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5))
+            areaPlayBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5, 305, 95)
+            screen.blit(btnPlay, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
+
+            areaExitBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5, 305, 95)
+            screen.blit(btnExit, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122) # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
             cursor_pos = pygame.mouse.get_pos()
             if areaPlayBtn.collidepoint(cursor_pos):
-                screen.blit(btnPlayHover, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 - 47.5))
+                screen.blit(btnPlayHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
             elif areaExitBtn.collidepoint(cursor_pos):
-                screen.blit(btnExitHover, (screen.get_width() / 2 - 152.5, screen.get_height() / 2 + 47.5))
+                screen.blit(btnExitHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
@@ -154,15 +156,14 @@ class UI:
                         self.current_page = self.menu_settings
                         return
 
-
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
                         screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0)
-                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+                        current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                         self.fullscreen = False
                     else: 
                         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync = 0)
-                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+                        current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                         self.fullscreen = True
             
             fps.render(screen)
@@ -172,7 +173,7 @@ class UI:
         global screen, running
 
         while 1:
-            dt = clock.tick(165) / 1000 # limit fps to 165 in game
+            dt = clock.tick(165) * 0.001 # limit fps to 165 in game
 
             areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
             screen.blit(btnAudio, (screen.get_width() - 289 - 5, 132))
@@ -213,7 +214,7 @@ class UI:
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen: 
                         screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0)
-                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+                        current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
                         pygame.display.flip() 
@@ -224,10 +225,9 @@ class UI:
                         while in the menu, which tanks performance
                         """
                         self.fullscreen = False
-                        return
                     else: 
                         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync = 0)
-                        current_background = pygame.transform.scale(original_background, (screen.get_width(), screen.get_height()))
+                        current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
                         pygame.display.flip() 
@@ -238,7 +238,6 @@ class UI:
                         while in the menu, which tanks performance
                         """
                         self.fullscreen = True
-                        return
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
@@ -250,14 +249,15 @@ class UI:
 
     def game(self):
         global running, screen
-        player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+
+        player_pos = pygame.Vector2(screen.get_width() * 0.5, screen.get_height() * 0.5)
 
         # load game music
         change_music(current_path + '/assets/musicBackground.mp3')
 
         while 1:
             screen.fill("black")
-            dt = clock.tick(165) / 1000 # limit fps to 165 in game
+            dt = clock.tick(165) * 0.001 # limit fps to 165 in game
 
             pygame.draw.circle(screen, "red", player_pos, 33)
 
@@ -293,11 +293,9 @@ class UI:
                     if self.fullscreen: 
                         screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0)
                         self.fullscreen = False
-                        return
                     else: 
                         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync = 0)
                         self.fullscreen = True
-                        return
 
             pygame.display.flip()
 
