@@ -28,7 +28,7 @@ pygame.display.set_caption('World Conquest')
 pygame.display.set_icon(icon)
 
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
-imgBackground = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
+imgBackground = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgBackground.jpg').convert(), (display_width, display_height))
 current_background = None
 screen.blit(imgBackground, (0, 0))
 pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110))
