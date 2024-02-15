@@ -50,7 +50,6 @@ dt = 0
 GAME CODE
 """
 
-
 def change_music(music_path):
     mixer.music.unload()
     mixer.music.load(music_path)
@@ -114,8 +113,8 @@ class UI:
             areaPlayBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5, 305, 95)
             screen.blit(btnPlay, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
 
-            areaQuitBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5, 305, 95)
-            screen.blit(btnQuit, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
+            areaExitBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5, 305, 95)
+            screen.blit(btnExit, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
@@ -124,23 +123,12 @@ class UI:
             cursor_pos = pygame.mouse.get_pos()
             if areaPlayBtn.collidepoint(cursor_pos):
                 screen.blit(btnPlayHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
-            elif areaQuitBtn.collidepoint(cursor_pos):
-                screen.blit(btnQuitHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
+            elif areaExitBtn.collidepoint(cursor_pos):
+                screen.blit(btnExitHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
             keys = pygame.key.get_pressed()
-
-            # when quitting the game, set running to false and returning out
-            # of the while loop will terminate the game
-            if keys[pygame.K_ESCAPE]:
-                        screen.fill("black")
-                        current_background.set_alpha(60)
-                        screen.blit(current_background, (0, 0))
-                        pygame.display.flip()
-                        self.current_page = self.menu_settings
-                        return
-
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -152,10 +140,10 @@ class UI:
                         self.current_page = self.game
                         change_music(current_path + '/assets/music/musicBackground.mp3')
                         return
-                    if areaQuitBtn.collidepoint(event.pos):
+                    elif areaExitBtn.collidepoint(event.pos):
                         running = False
                         return
-                    if areaSettingsBtn.collidepoint(event.pos):
+                    elif areaSettingsBtn.collidepoint(event.pos):
                         screen.fill("black")
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
@@ -169,17 +157,29 @@ class UI:
                         self.current_page = self.menu_settings
                         return
 
-                if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
-                    if self.fullscreen:
-                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
-                        current_background = pygame.transform.scale(imgBackground,
-                                                                    (screen.get_width(), screen.get_height()))
-                        self.fullscreen = False
-                    else:
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
-                        current_background = pygame.transform.scale(imgBackground,
-                                                                    (screen.get_width(), screen.get_height()))
-                        self.fullscreen = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == self.fullscreen_key:
+                        if self.fullscreen:
+                            screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
+                            current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
+                            self.fullscreen = False
+                        else:
+                            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
+                            current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
+                            self.fullscreen = True
+                    if event.key == pygame.K_ESCAPE:
+                        screen.fill("black")
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip()
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE opening the menu
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
+                        self.current_page = self.menu_settings
+                        return
 
             # fps.render(screen) # uncomment for debugging
             pygame.display.flip()
@@ -225,35 +225,34 @@ class UI:
                         self.current_page = self.menu
                         return
 
-                if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
-                    if self.fullscreen:
-                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
-                        current_background = pygame.transform.scale(imgBackground,
-                                                                    (screen.get_width(), screen.get_height()))
-                        current_background.set_alpha(60)
-                        screen.blit(current_background, (0, 0))
-                        pygame.display.flip()
-                        """
-                        ! important !
-                        this lowers the opacity of the background BEFORE fullscreen
-                        this means you do not need to call .set_alpha(60) on each frame
-                        while in the menu, which tanks performance
-                        """
-                        self.fullscreen = False
-                    else:
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
-                        current_background = pygame.transform.scale(imgBackground,
-                                                                    (screen.get_width(), screen.get_height()))
-                        current_background.set_alpha(60)
-                        screen.blit(current_background, (0, 0))
-                        pygame.display.flip()
-                        """
-                        ! important !
-                        this lowers the opacity of the background BEFORE fullscreen
-                        this means you do not need to call .set_alpha(60) on each frame
-                        while in the menu, which tanks performance
-                        """
-                        self.fullscreen = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == self.fullscreen_key:
+                        if self.fullscreen:
+                            screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
+                            current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
+                            current_background.set_alpha(60)
+                            screen.blit(current_background, (0, 0))
+                            pygame.display.flip()
+                            """
+                            ! important !
+                            this lowers the opacity of the background BEFORE fullscreen
+                            this means you do not need to call .set_alpha(60) on each frame
+                            while in the menu, which tanks performance
+                            """
+                            self.fullscreen = False
+                        else:
+                            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
+                            current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
+                            current_background.set_alpha(60)
+                            screen.blit(current_background, (0, 0))
+                            pygame.display.flip()
+                            """
+                            ! important !
+                            this lowers the opacity of the background BEFORE fullscreen
+                            this means you do not need to call .set_alpha(60) on each frame
+                            while in the menu, which tanks performance
+                            """
+                            self.fullscreen = True
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
@@ -293,11 +292,6 @@ class UI:
 
             keys = pygame.key.get_pressed()
 
-            if keys[pygame.K_ESCAPE]:
-                self.current_page = self.game_settings
-                # load menu music
-                return
-
             fps.render(screen)
             ui.render(screen)
 
@@ -328,13 +322,18 @@ class UI:
                             self.current_page = self.game_settings
                             return
 
-                if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
-                    if self.fullscreen:
-                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
-                        self.fullscreen = False
-                    else:
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
-                        self.fullscreen = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == self.fullscreen_key:
+                        if self.fullscreen:
+                            screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
+                            self.fullscreen = False
+                        else:
+                            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
+                            self.fullscreen = True
+                
+                    if event.key == pygame.K_ESCAPE:
+                        self.current_page = self.game_settings
+                        return
 
             pygame.display.flip()
     
@@ -347,19 +346,18 @@ class UI:
             areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 15, 132, 289, 90)
             screen.blit(btnAudio, (screen.get_width() - 289 - 15, 132))
 
-            areaExitBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
-            screen.blit(btnExit, (screen.get_width() - 289 - 15, 230))
+            areaQuitBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
+            screen.blit(btnQuit, (screen.get_width() - 289 - 15, 230))
 
-            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
-                                          122)  # offset 10px from the edge of the screen
+            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
 
             cursor_pos = pygame.mouse.get_pos()
             if areaAudioBtn.collidepoint(cursor_pos):
                 screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
-            elif areaExitBtn.collidepoint(cursor_pos):
-                screen.blit(btnExitHover, (screen.get_width() - 289 - 15, 230))
+            elif areaQuitBtn.collidepoint(cursor_pos):
+                screen.blit(btnQuitHover, (screen.get_width() - 289 - 15, 230))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
@@ -377,7 +375,7 @@ class UI:
                         else:
                             mixer.music.set_volume(0.33)
                         return
-                    if areaExitBtn.collidepoint(event.pos):
+                    if areaQuitBtn.collidepoint(event.pos):
                         self.current_page = self.menu
                         # load menu music
                         change_music(current_path + '/assets/music/musicMenu.mp3')
@@ -386,13 +384,14 @@ class UI:
                         self.current_page = self.game
                         return
 
-                if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
-                    if self.fullscreen:
-                        screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
-                        self.fullscreen = False
-                    else:
-                        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
-                        self.fullscreen = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key == self.fullscreen_key:
+                        if self.fullscreen:
+                            screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
+                            self.fullscreen = False
+                        else:
+                            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
+                            self.fullscreen = True
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
