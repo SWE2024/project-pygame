@@ -142,7 +142,7 @@ class UI:
                     running = False
                     return
 
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaPlayBtn.collidepoint(event.pos):
                         self.current_page = self.game
                         change_music(current_path + '/assets/musicBackground.mp3')
@@ -176,7 +176,7 @@ class UI:
                                                                     (screen.get_width(), screen.get_height()))
                         self.fullscreen = True
 
-            fps.render(screen)
+            # fps.render(screen) # uncomment for debugging
             pygame.display.flip()
 
     def menu_settings(self):
@@ -185,11 +185,11 @@ class UI:
         while 1:
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
-            areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
-            screen.blit(btnAudio, (screen.get_width() - 289 - 5, 132))
+            areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 15, 132, 289, 90)
+            screen.blit(btnAudio, (screen.get_width() - 289 - 15, 132))
 
-            areaBackBtn = pygame.Rect(screen.get_width() - 289 - 5, 230, 289, 90)
-            screen.blit(btnBack, (screen.get_width() - 289 - 5, 230))
+            areaBackBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
+            screen.blit(btnBack, (screen.get_width() - 289 - 15, 230))
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
@@ -197,9 +197,9 @@ class UI:
 
             cursor_pos = pygame.mouse.get_pos()
             if areaAudioBtn.collidepoint(cursor_pos):
-                screen.blit(btnAudioHover, (screen.get_width() - 289 - 5, 132))
+                screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
             elif areaBackBtn.collidepoint(cursor_pos):
-                screen.blit(btnBackHover, (screen.get_width() - 289 - 5, 230))
+                screen.blit(btnBackHover, (screen.get_width() - 289 - 15, 230))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
@@ -208,7 +208,7 @@ class UI:
                     running = False
                     return
 
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaAudioBtn.collidepoint(event.pos):
                         volume = mixer.music.get_volume()
                         if volume > 0:
@@ -253,27 +253,30 @@ class UI:
             """
             render only the button area, to improve performance and reduce unnecessary rendering
             """
-            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
-            fps.render(screen)
+            # pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
+            # fps.render(screen) # uncomment for debugging
             pygame.display.update(pygame.Rect(0, 0, 100, 25))
-            pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 322))
+            pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
     def game(self):
         global running, screen
+
+        c1 = pygame.image.load(current_path + '/assets/country1.png').convert_alpha()
+        c2 = pygame.image.load(current_path + '/assets/country2.png').convert_alpha()
 
         while 1:
             screen.fill("black")
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
             # insert game logic here
-            redCountry = pygame.rect.Rect(100, 100, 100, 100)
-            pygame.draw.rect(screen, "red", redCountry)
 
-            greenCountry = pygame.rect.Rect(300, 100, 100, 100)
-            pygame.draw.rect(screen, "green", greenCountry)
+            c1_pos = (100, 200)
+            c1_mask = pygame.mask.from_surface(c1)
+            screen.blit(c1, c1_pos)
 
-            blueCountry = pygame.rect.Rect(500, 100, 100, 100)
-            pygame.draw.rect(screen, "blue", blueCountry)
+            c2_pos = (500, 400)
+            c2_mask = pygame.mask.from_surface(c2)
+            screen.blit(c2, c2_pos)
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
@@ -294,7 +297,6 @@ class UI:
                 running = False
                 return
 
-            # flip() the display to put your work on screen
             fps.render(screen)
             ui.render(screen)
 
@@ -303,17 +305,27 @@ class UI:
                     running = False
                     return
                 
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if redCountry.collidepoint(cursor_pos) and pygame.MOUSEBUTTONDOWN:
-                        print('clicked red')
-                    elif blueCountry.collidepoint(cursor_pos) and pygame.MOUSEBUTTONDOWN:
-                        print('clicked blue')
-                    elif greenCountry.collidepoint(cursor_pos) and pygame.MOUSEBUTTONDOWN:
-                        print('clicked green')
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    """
+                    if you are reading this i apologise in advance
+                    there must be about 50 better ways of doing
+                    the exact same thing
+                    """
+                    try:
+                        if c1_mask.get_at((event.pos[0] - c1_pos[0], event.pos[1] - c1_pos[1])):
+                            print('clicked {country 1}')
+                    except IndexError:
+                        pass # ignore the exception :skull: :skull:
+
+                    try:
+                        if c2_mask.get_at((event.pos[0] - c2_pos[0], event.pos[1] - c2_pos[1])):
+                            print('clicked {country 2}')
+                    except IndexError:
+                        pass # ignore the exception :skull: :skull:
 
                     if areaSettingsBtn.collidepoint(event.pos):
-                        self.current_page = self.game_settings
-                        return
+                            self.current_page = self.game_settings
+                            return
 
                 if event.type == pygame.KEYDOWN and event.key == self.fullscreen_key:
                     if self.fullscreen:
@@ -329,14 +341,13 @@ class UI:
         global screen, running
 
         while 1:
-            screen.fill('black')
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
-            areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
-            screen.blit(btnAudio, (screen.get_width() - 289 - 5, 132))
+            areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 15, 132, 289, 90)
+            screen.blit(btnAudio, (screen.get_width() - 289 - 15, 132))
 
-            areaExitBtn = pygame.Rect(screen.get_width() - 289 - 5, 230, 289, 90)
-            screen.blit(btnExit, (screen.get_width() - 289 - 5, 230))
+            areaExitBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
+            screen.blit(btnExit, (screen.get_width() - 289 - 15, 230))
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
@@ -344,9 +355,9 @@ class UI:
 
             cursor_pos = pygame.mouse.get_pos()
             if areaAudioBtn.collidepoint(cursor_pos):
-                screen.blit(btnAudioHover, (screen.get_width() - 289 - 5, 132))
+                screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
             elif areaExitBtn.collidepoint(cursor_pos):
-                screen.blit(btnExitHover, (screen.get_width() - 289 - 5, 230))
+                screen.blit(btnExitHover, (screen.get_width() - 289 - 15, 230))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
@@ -355,7 +366,7 @@ class UI:
                     running = False
                     return
 
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaAudioBtn.collidepoint(event.pos):
                         volume = mixer.music.get_volume()
                         if volume > 0:
@@ -383,10 +394,10 @@ class UI:
             """
             render only the button area, to improve performance and reduce unnecessary rendering
             """
-            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
-            fps.render(screen)
-            pygame.display.update(pygame.Rect(0, 0, 100, 25))
-            pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 322))
+            # pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
+            # fps.render(screen) # uncomment for debugging
+            # pygame.display.update(pygame.Rect(0, 0, 100, 25))
+            pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
 
 fps = FPS()
