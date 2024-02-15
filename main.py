@@ -37,6 +37,7 @@ btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png').convert_alph
 btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png').convert_alpha()
 btnBack= pygame.image.load(current_path + '/assets/btnBack.png').convert_alpha()
 btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png').convert_alpha()
+btnQuit= pygame.image.load(current_path + '/assets/btnQuit.png').convert_alpha()
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
 imgBackground = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
 current_background = None
@@ -106,8 +107,8 @@ class UI:
             areaPlayBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5, 305, 95)
             screen.blit(btnPlay, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
 
-            areaExitBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5, 305, 95)
-            screen.blit(btnExit, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
+            areaQuitBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5, 305, 95)
+            screen.blit(btnQuit, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122) # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
@@ -115,7 +116,7 @@ class UI:
             cursor_pos = pygame.mouse.get_pos()
             if areaPlayBtn.collidepoint(cursor_pos):
                 screen.blit(btnPlayHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
-            elif areaExitBtn.collidepoint(cursor_pos):
+            elif areaQuitBtn.collidepoint(cursor_pos):
                 screen.blit(btnExitHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
