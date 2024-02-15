@@ -266,15 +266,19 @@ class UI:
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
             # insert game logic here
-            pygame.draw.rect(screen, "red", (100, 100, 100, 100))
+            redCountry = pygame.rect.Rect(100, 100, 100, 100)
+            pygame.draw.rect(screen, "red", redCountry)
 
-            pygame.draw.rect(screen, "green", (300, 100, 100, 100))
+            greenCountry = pygame.rect.Rect(300, 100, 100, 100)
+            pygame.draw.rect(screen, "green", greenCountry)
 
-            pygame.draw.rect(screen, "blue", (500, 100, 100, 100))
+            blueCountry = pygame.rect.Rect(500, 100, 100, 100)
+            pygame.draw.rect(screen, "blue", blueCountry)
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
+
             cursor_pos = pygame.mouse.get_pos()
             if areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
@@ -300,6 +304,13 @@ class UI:
                     return
                 
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if redCountry.collidepoint(cursor_pos) and pygame.MOUSEBUTTONDOWN:
+                        print('clicked red')
+                    elif blueCountry.collidepoint(cursor_pos) and pygame.MOUSEBUTTONDOWN:
+                        print('clicked blue')
+                    elif greenCountry.collidepoint(cursor_pos) and pygame.MOUSEBUTTONDOWN:
+                        print('clicked green')
+
                     if areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.game_settings
                         return
