@@ -183,8 +183,8 @@ class UI:
             areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 5, 132, 289, 90)
             screen.blit(btnAudio, (screen.get_width() - 289 - 5, 132))
 
-            areaBackBtn = pygame.Rect(screen.get_width() - 289 - 5, 222, 289, 90)
-            screen.blit(btnBack, (screen.get_width() - 289 - 5, 222))
+            areaBackBtn = pygame.Rect(screen.get_width() - 289 - 5, 230, 289, 90)
+            screen.blit(btnBack, (screen.get_width() - 289 - 5, 230))
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
@@ -194,7 +194,7 @@ class UI:
             if areaAudioBtn.collidepoint(cursor_pos):
                 screen.blit(btnAudioHover, (screen.get_width() - 289 - 5, 132))
             elif areaBackBtn.collidepoint(cursor_pos):
-                screen.blit(btnBackHover, (screen.get_width() - 289 - 5, 222))
+                screen.blit(btnBackHover, (screen.get_width() - 289 - 5, 230))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
