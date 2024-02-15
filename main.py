@@ -185,8 +185,6 @@ class UI:
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
-            keys = pygame.key.get_pressed()
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -195,7 +193,10 @@ class UI:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaPlayBtn.collidepoint(event.pos):
                         self.current_page = self.game
+                        resize_all(loc)
+                        volume = mixer.music.get_volume()
                         change_music(current_path + '/assets/music/musicBackground.mp3')
+                        mixer.music.set_volume(volume)
                         return
                     elif areaExitBtn.collidepoint(event.pos):
                         running = False
@@ -434,8 +435,9 @@ class UI:
                         return
                     if areaQuitBtn.collidepoint(event.pos):
                         self.current_page = self.menu
-                        # load menu music
+                        volume = mixer.music.get_volume()
                         change_music(current_path + '/assets/music/musicMenu.mp3')
+                        mixer.music.set_volume(volume)
                         return
                     if areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.game
