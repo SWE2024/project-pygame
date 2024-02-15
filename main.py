@@ -27,28 +27,18 @@ icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
 pygame.display.set_caption('World Conquest')
 pygame.display.set_icon(icon)
 
-btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
-btnPlayHover = pygame.image.load(current_path + '/assets/buttons/btnPlayHover.png').convert_alpha()
-btnSettings = pygame.image.load(current_path + '/assets/buttons/btnSettings.png').convert_alpha()
-btnSettingsHover = pygame.image.load(current_path + '/assets/buttons/btnSettingsHover.png').convert_alpha()
-btnAudio = pygame.image.load(current_path + '/assets/buttons/btnAudio.png').convert_alpha()
-btnAudioHover = pygame.image.load(current_path + '/assets/buttons/btnAudioHover.png').convert_alpha()
-btnBack = pygame.image.load(current_path + '/assets/buttons/btnBack.png').convert_alpha()
-btnBackHover = pygame.image.load(current_path + '/assets/buttons/btnBackHover.png').convert_alpha()
-btnExit = pygame.image.load(current_path + '/assets/buttons/btnExit.png').convert_alpha()
-btnExitHover = pygame.image.load(current_path + '/assets/buttons/btnExitHover.png').convert_alpha()
-btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').convert_alpha()
-btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
 imgBackground = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
 current_background = None
+screen.blit(imgBackground, (0, 0))
+pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110))
 
-clock = pygame.time.Clock()
-dt = 0
-
-"""
-GAME CODE
-"""
+x = 0
+def update_progress_bar():
+    global x
+    pygame.draw.rect(screen, (255, 215, 0, 255), pygame.Rect(150, display_height * 0.75, (display_width * x) - 300, 100))
+    pygame.display.flip()
+    x += (1 / 28)
 
 def change_music(music_path):
     mixer.music.unload()
@@ -56,6 +46,14 @@ def change_music(music_path):
     mixer.music.play(-1)
     mixer.music.set_volume(0.3)
 
+def resize_all(list_of_countries):
+    new_width = screen.get_width()
+    new_height = screen.get_height()
+    screen.fill('black')
+
+    for country in list_of_countries:
+        country.set_image(new_width, new_height)
+        screen.blit(country.get_image(), (0, 0))
 
 class FPS:
     def __init__(self):
@@ -65,6 +63,65 @@ class FPS:
         self.text = self.font.render('FPS: ' + str(round(clock.get_fps())), True, (255, 255, 255))
         screen.blit(self.text, (0, 0))
 
+class Country:
+    name = ''
+    image = None # the physical render of the country
+    mask = None # the clickable area
+    no_of_troops = 0
+    owner = None # references the Player class that owns the country
+
+    def __init__(self, name, image, owner):
+        self.name = name
+        self.image = image # this should be pygame.image.load(current_path + '/assets/countries/countryname.png').convert_alpha()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.owner = owner
+    
+    def get_name(self):
+        return self.name
+    
+    def set_image(self, x, y):
+        self.image = pygame.transform.scale(self.image, (x, y))
+        self.mask = pygame.mask.from_surface(self.image)
+        return
+    
+    def get_image(self):
+        return self.image
+    
+    def get_mask(self):
+        return self.mask
+    
+    def get_owner(self):
+        return self.owner
+
+update_progress_bar()
+btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
+btnPlayHover = pygame.image.load(current_path + '/assets/buttons/btnPlayHover.png').convert_alpha()
+btnExit = pygame.image.load(current_path + '/assets/buttons/btnExit.png').convert_alpha()
+btnExitHover = pygame.image.load(current_path + '/assets/buttons/btnExitHover.png').convert_alpha()
+btnSettings = pygame.image.load(current_path + '/assets/buttons/btnSettings.png').convert_alpha()
+btnSettingsHover = pygame.image.load(current_path + '/assets/buttons/btnSettingsHover.png').convert_alpha()
+btnAudio = pygame.image.load(current_path + '/assets/buttons/btnAudio.png').convert_alpha()
+btnAudioHover = pygame.image.load(current_path + '/assets/buttons/btnAudioHover.png').convert_alpha()
+btnBack = pygame.image.load(current_path + '/assets/buttons/btnBack.png').convert_alpha()
+btnBackHover = pygame.image.load(current_path + '/assets/buttons/btnBackHover.png').convert_alpha()
+btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').convert_alpha()
+btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
+update_progress_bar()
+
+loc = []
+
+for i in range(1, 26):
+    country_no = f"{i}"
+    country_no = Country(f"killzone #{country_no}", pygame.image.load(current_path + f'/assets/countries/country{country_no}.png').convert_alpha(), None)
+    loc.append(country_no)
+    update_progress_bar()
+
+clock = pygame.time.Clock()
+dt = 0
+
+"""
+GAME CODE
+"""
 
 class UI:
     """
@@ -163,10 +220,12 @@ class UI:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = False
+                            resize_all(loc)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = True
+                            resize_all(loc)
                     if event.key == pygame.K_ESCAPE:
                         screen.fill("black")
                         current_background.set_alpha(60)
@@ -240,6 +299,7 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = False
+                            resize_all(loc)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
@@ -253,6 +313,7 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = True
+                            resize_all(loc)
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
@@ -265,22 +326,15 @@ class UI:
     def game(self):
         global running, screen
 
-        c1 = pygame.image.load(current_path + '/assets/countries/country1.png').convert_alpha()
-        c2 = pygame.image.load(current_path + '/assets/countries/country2.png').convert_alpha()
+        screen.fill('black')
+        for country in loc:
+            screen.blit(country.get_image(), (0, 0))
 
         while 1:
-            screen.fill("black")
+            # screen.fill("black") # comment out if you need to do something else
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
             # insert game logic here
-
-            c1_pos = (100, 200)
-            c1_mask = pygame.mask.from_surface(c1)
-            screen.blit(c1, c1_pos)
-
-            c2_pos = (500, 400)
-            c2_mask = pygame.mask.from_surface(c2)
-            screen.blit(c2, c2_pos)
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
@@ -290,10 +344,12 @@ class UI:
             if areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
-            keys = pygame.key.get_pressed()
+            # keys = pygame.key.get_pressed()
 
-            fps.render(screen)
-            ui.render(screen)
+            # pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 75))  # prevents FPS values overlapping
+            # fps.render(screen)
+            # pygame.display.update(pygame.Rect(0, 0, 100, 75))
+            # ui.render(screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -307,14 +363,10 @@ class UI:
                     the exact same thing
                     """
                     try:
-                        if c1_mask.get_at((event.pos[0] - c1_pos[0], event.pos[1] - c1_pos[1])):
-                            print('clicked {country 1}')
-                    except IndexError:
-                        pass # ignore the exception :skull: :skull:
-
-                    try:
-                        if c2_mask.get_at((event.pos[0] - c2_pos[0], event.pos[1] - c2_pos[1])):
-                            print('clicked {country 2}')
+                        for country in loc:
+                            if country.get_mask().get_at((event.pos[0], event.pos[1])):
+                                print(f'clicked country: {country.get_name()}')
+                                break
                     except IndexError:
                         pass # ignore the exception :skull: :skull:
 
@@ -327,14 +379,19 @@ class UI:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
+                            resize_all(loc)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
+                            resize_all(loc)
                 
                     if event.key == pygame.K_ESCAPE:
                         self.current_page = self.game_settings
                         return
 
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
+            fps.render(screen) # uncomment for debugging
+            pygame.display.update(pygame.Rect(0, 0, 100, 25))
             pygame.display.flip()
     
     def game_settings(self):
@@ -389,9 +446,11 @@ class UI:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
+                            resize_all(loc)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
+                            resize_all(loc)
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
