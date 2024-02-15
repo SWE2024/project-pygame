@@ -151,6 +151,12 @@ class UI:
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
                         pygame.display.flip() 
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE opening the menu
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
                         self.current_page = self.menu_settings
                         return
 
