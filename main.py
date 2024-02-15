@@ -1,6 +1,6 @@
 import pygame
 import os
-from pygame import mixer;
+from pygame import mixer
 
 """
 SETUP CODE
@@ -17,8 +17,8 @@ display_height = display_info.current_h
 
 # choose here whether to start in resizable or fullscreen
 screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN, vsync = 0)
+# screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0) # use to begin in windowed
 
-# screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN) # use to begin in fullscreen
 init_fullscreen = True # set to true if beginning in fulscreen
 
 # file system setup
@@ -151,12 +151,6 @@ class UI:
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
                         pygame.display.flip() 
-                        """
-                        ! important !
-                        this lowers the opacity of the background BEFORE opening the menu
-                        this means you do not need to call .set_alpha(60) on each frame
-                        while in the menu, which tanks performance
-                        """
                         self.current_page = self.menu_settings
                         return
 
@@ -261,6 +255,7 @@ class UI:
 
         while 1:
             screen.fill("black")
+
             dt = clock.tick(165) * 0.001 # limit fps to 165 in game
 
             pygame.draw.circle(screen, "red", player_pos, 33)
