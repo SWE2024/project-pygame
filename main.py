@@ -134,8 +134,13 @@ class UI:
             # when quitting the game, set running to false and returning out
             # of the while loop will terminate the game
             if keys[pygame.K_ESCAPE]:
-                running = False
-                return
+                        screen.fill("black")
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip()
+                        self.current_page = self.menu_settings
+                        return
+
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -288,13 +293,9 @@ class UI:
 
             keys = pygame.key.get_pressed()
 
-            if keys[pygame.K_TAB]:
-                self.current_page = self.menu
-                # load menu music
-                change_music(current_path + '/assets/music/musicMenu.mp3')
-                return
             if keys[pygame.K_ESCAPE]:
-                running = False
+                self.current_page = self.game_settings
+                # load menu music
                 return
 
             fps.render(screen)
@@ -353,6 +354,7 @@ class UI:
                                           122)  # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
+
             cursor_pos = pygame.mouse.get_pos()
             if areaAudioBtn.collidepoint(cursor_pos):
                 screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
@@ -360,6 +362,7 @@ class UI:
                 screen.blit(btnExitHover, (screen.get_width() - 289 - 15, 230))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
+
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
