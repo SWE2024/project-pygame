@@ -27,18 +27,18 @@ icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
 pygame.display.set_caption('World Conquest')
 pygame.display.set_icon(icon)
 
-btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png').convert_alpha()
-btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png').convert_alpha()
-btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png').convert_alpha()
-btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png').convert_alpha()
-btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png').convert_alpha()
-btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png').convert_alpha()
-btnBack = pygame.image.load(current_path + '/assets/btnBack.png').convert_alpha()
-btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png').convert_alpha()
-btnExit = pygame.image.load(current_path + '/assets/btnExit.png').convert_alpha()
-btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png').convert_alpha()
-btnQuit = pygame.image.load(current_path + '/assets/btnQuit.png').convert_alpha()
-btnQuitHover = pygame.image.load(current_path + '/assets/btnQuitHover.png').convert_alpha()
+btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
+btnPlayHover = pygame.image.load(current_path + '/assets/buttons/btnPlayHover.png').convert_alpha()
+btnSettings = pygame.image.load(current_path + '/assets/buttons/btnSettings.png').convert_alpha()
+btnSettingsHover = pygame.image.load(current_path + '/assets/buttons/btnSettingsHover.png').convert_alpha()
+btnAudio = pygame.image.load(current_path + '/assets/buttons/btnAudio.png').convert_alpha()
+btnAudioHover = pygame.image.load(current_path + '/assets/buttons/btnAudioHover.png').convert_alpha()
+btnBack = pygame.image.load(current_path + '/assets/buttons/btnBack.png').convert_alpha()
+btnBackHover = pygame.image.load(current_path + '/assets/buttons/btnBackHover.png').convert_alpha()
+btnExit = pygame.image.load(current_path + '/assets/buttons/btnExit.png').convert_alpha()
+btnExitHover = pygame.image.load(current_path + '/assets/buttons/btnExitHover.png').convert_alpha()
+btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').convert_alpha()
+btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
 imgBackground = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
 current_background = None
@@ -87,7 +87,7 @@ class UI:
         self.fullscreen = init_fullscreen
 
         # load startup music
-        change_music(current_path + '/assets/musicMenu.mp3')
+        change_music(current_path + '/assets/music/musicMenu.mp3')
 
     def render(self, screen):
         """
@@ -109,7 +109,7 @@ class UI:
 
             screen.blit(current_background, (0, 0))
 
-            screen.blit(imgLogo, (screen.get_width() * 0.5 - 375, 10))
+            screen.blit(imgLogo, (screen.get_width() * 0.5 - 363, 20))
 
             areaPlayBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5, 305, 95)
             screen.blit(btnPlay, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
@@ -145,7 +145,7 @@ class UI:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaPlayBtn.collidepoint(event.pos):
                         self.current_page = self.game
-                        change_music(current_path + '/assets/musicBackground.mp3')
+                        change_music(current_path + '/assets/music/musicBackground.mp3')
                         return
                     if areaQuitBtn.collidepoint(event.pos):
                         running = False
@@ -261,8 +261,8 @@ class UI:
     def game(self):
         global running, screen
 
-        c1 = pygame.image.load(current_path + '/assets/country1.png').convert_alpha()
-        c2 = pygame.image.load(current_path + '/assets/country2.png').convert_alpha()
+        c1 = pygame.image.load(current_path + '/assets/countries/country1.png').convert_alpha()
+        c2 = pygame.image.load(current_path + '/assets/countries/country2.png').convert_alpha()
 
         while 1:
             screen.fill("black")
@@ -291,7 +291,7 @@ class UI:
             if keys[pygame.K_TAB]:
                 self.current_page = self.menu
                 # load menu music
-                change_music(current_path + '/assets/musicMenu.mp3')
+                change_music(current_path + '/assets/music/musicMenu.mp3')
                 return
             if keys[pygame.K_ESCAPE]:
                 running = False
@@ -377,7 +377,7 @@ class UI:
                     if areaExitBtn.collidepoint(event.pos):
                         self.current_page = self.menu
                         # load menu music
-                        change_music(current_path + '/assets/musicMenu.mp3')
+                        change_music(current_path + '/assets/music/musicMenu.mp3')
                         return
                     if areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.game
