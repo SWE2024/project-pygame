@@ -4,48 +4,24 @@ from pygame import mixer
 from enum import Enum
 
 """
-SETUP CODE
+INITIALISE
 """
-# pygame setup
+
+# pygame and audio setup
 pygame.mixer.pre_init(44100, 16, 2, 4096)
 pygame.init()
 pygame.mixer.music.set_volume(0.33)
-
-# screen setup
-display_info = pygame.display.Info()
-display_width = display_info.current_w
-display_height = display_info.current_h
-
-# choose here whether to start in resizable or full screen
-screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN, vsync=0)
-# screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0) # use to begin in windowed
-
-init_fullscreen = True # set to true if beginning in full screen
-
-# file system setup
-current_path = os.path.dirname(__file__)
-icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
-pygame.display.set_caption('World Conquest')
-pygame.display.set_icon(icon)
-
-imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
-imgBackground = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgBackground.jpg').convert(), (display_width, display_height))
-current_background = None
-screen.blit(imgBackground, (0, 0))
-pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110))
-
-x = 0
-def update_progress_bar():
-    global x
-    pygame.draw.rect(screen, (255, 215, 0, 255), pygame.Rect(150, display_height * 0.75, (display_width * x) - 300, 100))
-    pygame.display.flip()
-    x += (1 / 28)
 
 def change_music(music_path):
     mixer.music.unload()
     mixer.music.load(music_path)
     mixer.music.play(-1)
     mixer.music.set_volume(0.3)
+
+# screen setup
+display_info = pygame.display.Info()
+display_width = display_info.current_w
+display_height = display_info.current_h
 
 def resize_all(list_of_countries):
     new_width = screen.get_width()
@@ -56,6 +32,15 @@ def resize_all(list_of_countries):
         country.set_image(new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
+# choose here whether to start in resizable or full screen
+screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN, vsync=0)
+# screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0) # use to begin in windowed
+init_fullscreen = True # true = begin in full screen
+
+"""
+CLASSES
+"""
+
 class FPS:
     def __init__(self):
         self.font = pygame.font.SysFont('Calibri', 32)
@@ -64,14 +49,21 @@ class FPS:
         self.text = self.font.render('FPS: ' + str(round(clock.get_fps())), True, (255, 255, 255))
         screen.blit(self.text, (0, 0))
 
+class Colour(Enum):
+    RED = pygame.color.Color(255, 0, 0, 255)
+    GREEN = pygame.color.Color(0, 255, 0, 255)
+    BLUE = pygame.color.Color(0, 0, 255, 255)
+
 class Country:
+    id = 0
     name = ''
     image = None # the physical render of the country
     mask = None # the clickable area
     no_of_troops = 0
     owner = None # references the Player class that owns the country
 
-    def __init__(self, name, image, owner):
+    def __init__(self, id, name, image, owner):
+        self.id = id
         self.name = name
         self.image = image # this should be pygame.image.load(current_path + '/assets/countries/countryname.png').convert_alpha()
         self.mask = pygame.mask.from_surface(self.image)
@@ -80,13 +72,13 @@ class Country:
     def get_name(self):
         return self.name
     
+    def get_image(self):
+        return self.image
+    
     def set_image(self, x, y):
         self.image = pygame.transform.scale(self.image, (x, y))
         self.mask = pygame.mask.from_surface(self.image)
         return
-    
-    def get_image(self):
-        return self.image
     
     def get_mask(self):
         return self.mask
@@ -94,11 +86,70 @@ class Country:
     def get_owner(self):
         return self.owner
 
+    def set_owner(self, owner):
+        self.owner = owner
+    
+    def get_neighbours(self):
+        pass
+
+    def get_troops(self):
+        return self.no_of_troops
+    
+    def set_troops(self, new_total):
+        self.no_of_troops = new_total
+
 class Player:
+    id = 0
     username = ''
     colour = None
+    territories = []
 
+    def __init__(self, id, username, colour):
+        self.id = id
+        self.username = username
+        self.colour = colour
+        self.territories.append(None) # should probably append some random territories here
+    
+    def get_username(self):
+        return self.username
+    
+    def get_colour(self):
+        return self.colour
+    
+    def get_territories(self):
+        return self.territories
+    
+    def set_territory(self, country):
+        self.territories.append(country)
+    
+    def get_score(self):
+        return len(self.territories)
+
+"""
+LOADING FILES
+"""
+
+# file system setup
+x = 0
+def update_progress_bar():
+    global x
+    pygame.draw.rect(screen, (255, 215, 0, 255), pygame.Rect(150, display_height * 0.75, (display_width * x) - 300, 100))
+    pygame.display.flip()
+    x += (1 / 29)
+
+current_path = os.path.dirname(__file__)
+icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
+pygame.display.set_caption('World Conquest')
+pygame.display.set_icon(icon)
 update_progress_bar()
+
+imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
+imgBackground = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgBackground.jpg').convert(), (display_width, display_height))
+current_background = None
+screen.blit(imgBackground, (0, 0))
+pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110))
+update_progress_bar()
+
 btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
 btnPlayHover = pygame.image.load(current_path + '/assets/buttons/btnPlayHover.png').convert_alpha()
 btnExit = pygame.image.load(current_path + '/assets/buttons/btnExit.png').convert_alpha()
@@ -113,14 +164,21 @@ btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').conver
 btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
 update_progress_bar()
 
-loc = []
+list_of_countries = []
+list_of_players = []
 
+# adding all players
+player = Player(0, 'LewisRye', Colour.RED)
+list_of_players.append(player)
+
+# adding all countries
 for i in range(1, 26):
     country_no = f"{i}"
-    country_no = Country(f"killzone #{country_no}", pygame.image.load(current_path + f'/assets/countries/country{country_no}.png').convert_alpha(), None)
-    loc.append(country_no)
+    country = Country(country_no, f"killzone #{country_no}", pygame.image.load(current_path + f'/assets/countries/country{country_no}.png').convert_alpha(), None)
+    list_of_countries.append(country)
     update_progress_bar()
 
+# frame dependent physics setup
 clock = pygame.time.Clock()
 dt = 0
 
@@ -198,7 +256,7 @@ class UI:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaPlayBtn.collidepoint(event.pos):
                         self.current_page = self.game
-                        resize_all(loc)
+                        resize_all(list_of_countries)
                         volume = mixer.music.get_volume()
                         change_music(current_path + '/assets/music/musicBackground.mp3')
                         mixer.music.set_volume(volume)
@@ -226,12 +284,12 @@ class UI:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = False
-                            resize_all(loc)
+                            resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = True
-                            resize_all(loc)
+                            resize_all(list_of_countries)
                     if event.key == pygame.K_ESCAPE:
                         screen.fill("black")
                         current_background.set_alpha(60)
@@ -305,7 +363,7 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = False
-                            resize_all(loc)
+                            resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
@@ -319,7 +377,7 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = True
-                            resize_all(loc)
+                            resize_all(list_of_countries)
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
@@ -333,7 +391,7 @@ class UI:
         global running, screen
 
         screen.fill('black')
-        for country in loc:
+        for country in list_of_countries:
             screen.blit(country.get_image(), (0, 0))
 
         while 1:
@@ -350,13 +408,6 @@ class UI:
             if areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
-            # keys = pygame.key.get_pressed()
-
-            # pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 75))  # prevents FPS values overlapping
-            # fps.render(screen)
-            # pygame.display.update(pygame.Rect(0, 0, 100, 75))
-            # ui.render(screen)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -369,9 +420,10 @@ class UI:
                     the exact same thing
                     """
                     try:
-                        for country in loc:
+                        for country in list_of_countries:
                             if country.get_mask().get_at((event.pos[0], event.pos[1])):
-                                print(f'clicked country: {country.get_name()}')
+                                print(f'{player.get_username()} has painted {country.get_name()} {player.get_colour()}')
+                                # todo: make it change colour and update the game logic
                                 break
                     except IndexError:
                         pass # ignore the exception :skull: :skull:
@@ -385,11 +437,11 @@ class UI:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
-                            resize_all(loc)
+                            resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
-                            resize_all(loc)
+                            resize_all(list_of_countries)
                 
                     if event.key == pygame.K_ESCAPE:
                         self.current_page = self.game_settings
@@ -453,11 +505,11 @@ class UI:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
-                            resize_all(loc)
+                            resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
-                            resize_all(loc)
+                            resize_all(list_of_countries)
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
