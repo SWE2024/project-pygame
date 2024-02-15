@@ -29,15 +29,16 @@ pygame.display.set_icon(icon)
 
 btnPlay = pygame.image.load(current_path + '/assets/btnPlay.png').convert_alpha()
 btnPlayHover = pygame.image.load(current_path + '/assets/btnPlayHover.png').convert_alpha()
-btnExit = pygame.image.load(current_path + '/assets/btnExit.png').convert_alpha()
-btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png').convert_alpha()
 btnSettings = pygame.image.load(current_path + '/assets/btnSettings.png').convert_alpha()
 btnSettingsHover = pygame.image.load(current_path + '/assets/btnSettingsHover.png').convert_alpha()
 btnAudio = pygame.image.load(current_path + '/assets/btnAudio.png').convert_alpha()
 btnAudioHover = pygame.image.load(current_path + '/assets/btnAudioHover.png').convert_alpha()
 btnBack= pygame.image.load(current_path + '/assets/btnBack.png').convert_alpha()
 btnBackHover = pygame.image.load(current_path + '/assets/btnBackHover.png').convert_alpha()
-btnQuit= pygame.image.load(current_path + '/assets/btnQuit.png').convert_alpha()
+btnExit = pygame.image.load(current_path + '/assets/btnExit.png').convert_alpha()
+btnExitHover = pygame.image.load(current_path + '/assets/btnExitHover.png').convert_alpha()
+btnQuit = pygame.image.load(current_path + '/assets/btnQuit.png').convert_alpha()
+btnQuitHover = pygame.image.load(current_path + '/assets/btnQuitHover.png').convert_alpha()
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
 imgBackground = pygame.image.load(current_path + '/assets/imgBackground.jpg').convert()
 current_background = None
@@ -117,7 +118,7 @@ class UI:
             if areaPlayBtn.collidepoint(cursor_pos):
                 screen.blit(btnPlayHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
             elif areaQuitBtn.collidepoint(cursor_pos):
-                screen.blit(btnExitHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
+                screen.blit(btnQuitHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
@@ -144,7 +145,7 @@ class UI:
                     if areaPlayBtn.collidepoint(event.pos):
                         self.current_page = self.game
                         return
-                    if areaExitBtn.collidepoint(event.pos):
+                    if areaQuitBtn.collidepoint(event.pos):
                         running = False
                         return
                     if areaSettingsBtn.collidepoint(event.pos):
