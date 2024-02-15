@@ -3,6 +3,9 @@ import pygame
 import os
 from pygame import mixer;
 
+"""
+Enter the setup code here
+"""
 def main():
     """
     Enter the game code here
