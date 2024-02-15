@@ -389,9 +389,9 @@ class UI:
                         self.current_page = self.game_settings
                         return
 
-            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 120, 25))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
-            pygame.display.update(pygame.Rect(0, 0, 100, 25))
+            pygame.display.update(pygame.Rect(0, 0, 120, 25))
             pygame.display.flip()
     
     def game_settings(self):
@@ -455,9 +455,9 @@ class UI:
             """
             render only the button area, to improve performance and reduce unnecessary rendering
             """
-            # pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
-            # fps.render(screen) # uncomment for debugging
-            # pygame.display.update(pygame.Rect(0, 0, 100, 25))
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 120, 25))  # prevents FPS values overlapping
+            fps.render(screen) # uncomment for debugging
+            pygame.display.update(pygame.Rect(0, 0, 120, 25))
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
 
