@@ -32,7 +32,8 @@ def resize_all(list_of_countries):
         country.set_image(new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
-def fill(surface, color, width, height):
+def fill(surface, color):
+    width, height = surface.get_size()
     for x in range(width):
         for y in range(height):
             a = surface.get_at((x, y))[3]
@@ -58,6 +59,8 @@ class FPS:
         screen.blit(self.text, (0, 0))
 
 class Colour(Enum):
+    WHITE = pygame.color.Color(255, 255, 255, 255) # default value
+
     RED = pygame.color.Color(255, 0, 0, 255)
     GREEN = pygame.color.Color(0, 255, 0, 255)
     BLUE = pygame.color.Color(0, 0, 255, 255)
@@ -69,7 +72,7 @@ class Country:
     mask = None # the clickable area
     no_of_troops = 0
     owner = None # references the Player class that owns the country
-    colour = None
+    colour = Colour.WHITE
 
     def __init__(self, id, name, image, owner):
         self.id = id
@@ -78,7 +81,6 @@ class Country:
         self.new_image = image
         self.mask = pygame.mask.from_surface(self.image)
         self.owner = owner
-        self.colour = pygame.color.Color(255, 255, 255, 255)
     
     def get_name(self):
         return self.name
@@ -111,11 +113,14 @@ class Country:
     
     def get_colour(self):
         return self.colour
-
-    def set_colour(self, colour, width, height):
-        self.new_image = fill(self.image, colour, width, height)
-        self.colour = colour
-        return self.new_image
+    
+    def set_colour(self, colour, x, y):
+        if (colour != Colour.WHITE) and (colour in list_of_colours):
+            self.image = fill(self.image, colour)
+            self.set_image(x, y)
+            self.mask = pygame.mask.from_surface(self.new_image)
+            self.colour = colour
+        return
 
 class Player:
     id = 0
@@ -185,6 +190,7 @@ update_progress_bar()
 
 list_of_countries = []
 list_of_players = []
+list_of_colours = [item.value for item in Colour]
 
 # adding all players
 player = Player(0, 'user1', Colour.BLUE)
