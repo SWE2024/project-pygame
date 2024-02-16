@@ -32,14 +32,25 @@ def resize_all(list_of_countries):
         country.set_image(new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
-def fill(surface, color):
-    width, height = surface.get_size()
-    for x in range(width):
-        for y in range(height):
-            a = surface.get_at((x, y))[3]
-            if a > 0:
-                surface.set_at((x, y), pygame.Color(color))
-    return surface
+def fill(country, color):
+    width, height = country.get_size()
+
+    """
+    The idea here is that you only need to render the area of the 
+    map and you should try and ignore parts of the map where you know
+    countries do not exist, an example would be the far left and far
+    right of the map, this is described in boundary_x
+    """
+
+    boundary_x = int(0.2 * width)
+    boundary_y = int(0.16 * height)
+    print(country.get_at((0, 0)))
+
+    for x in range(boundary_x, width - boundary_x): # optimise with lower values
+        for y in range(boundary_y, height - boundary_y): # optimise with lower values
+            if country.get_at((x, y))[3] > 0:
+                country.set_at((x, y), pygame.Color(color))
+    return country
 
 # choose here whether to start in resizable or full screen
 screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN, vsync=0)
