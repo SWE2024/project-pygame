@@ -32,6 +32,15 @@ def resize_all(list_of_countries):
         country.set_image(new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
+def fill(surface, color):
+    width, height = surface.get_size()
+    for x in range(width):
+        for y in range(height):
+            a = surface.get_at((x, y))[3]
+            if a > 0:
+                surface.set_at((x, y), pygame.Color(color))
+    return surface
+
 # choose here whether to start in resizable or full screen
 screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN, vsync=0)
 # screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync = 0) # use to begin in windowed
@@ -50,6 +59,8 @@ class FPS:
         screen.blit(self.text, (0, 0))
 
 class Colour(Enum):
+    WHITE = pygame.color.Color(255, 255, 255, 255) # default value
+
     RED = pygame.color.Color(255, 0, 0, 255)
     GREEN = pygame.color.Color(0, 255, 0, 255)
     BLUE = pygame.color.Color(0, 0, 255, 255)
@@ -61,6 +72,7 @@ class Country:
     mask = None # the clickable area
     no_of_troops = 0
     owner = None # references the Player class that owns the country
+    colour = Colour.WHITE
 
     def __init__(self, id, name, image, owner):
         self.id = id
@@ -98,6 +110,17 @@ class Country:
     
     def set_troops(self, new_total):
         self.no_of_troops = new_total
+    
+    def get_colour(self):
+        return self.colour
+    
+    def set_colour(self, colour, x, y):
+        if (colour != Colour.WHITE) and (colour in list_of_colours):
+            self.image = fill(self.image, colour)
+            self.set_image(x, y)
+            self.mask = pygame.mask.from_surface(self.new_image)
+            self.colour = colour
+        return
 
 class Player:
     id = 0
@@ -167,9 +190,10 @@ update_progress_bar()
 
 list_of_countries = []
 list_of_players = []
+list_of_colours = [item.value for item in Colour]
 
 # adding all players
-player = Player(0, 'LewisRye', Colour.RED)
+player = Player(0, 'user1', Colour.BLUE)
 list_of_players.append(player)
 
 # adding all countries
@@ -423,7 +447,10 @@ class UI:
                     try:
                         for country in list_of_countries:
                             if country.get_mask().get_at((event.pos[0], event.pos[1])):
-                                print(f'{player.get_username()} has painted {country.get_name()} {player.get_colour()}')
+                                print(f'{player.get_username()} has painted {country.get_name()} {player.get_colour().value}')
+                                country.set_colour(player.get_colour().value, screen.get_width(), screen.get_height())
+                                screen.blit(country.get_image(), (0, 0))
+                                # pygame.display.flip()
                                 # todo: make it change colour and update the game logic
                                 break
                     except IndexError:
