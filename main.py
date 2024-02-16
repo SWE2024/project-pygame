@@ -66,6 +66,7 @@ class Country:
         self.id = id
         self.name = name
         self.image = image # this should be pygame.image.load(current_path + '/assets/countries/countryname.png').convert_alpha()
+        self.new_image = image
         self.mask = pygame.mask.from_surface(self.image)
         self.owner = owner
     
@@ -73,11 +74,11 @@ class Country:
         return self.name
     
     def get_image(self):
-        return self.image
+        return self.new_image
     
     def set_image(self, x, y):
-        self.image = pygame.transform.scale(self.image, (x, y))
-        self.mask = pygame.mask.from_surface(self.image)
+        self.new_image = pygame.transform.scale(self.image, (x, y))
+        self.mask = pygame.mask.from_surface(self.new_image)
         return
     
     def get_mask(self):
@@ -426,6 +427,7 @@ class UI:
                                 # todo: make it change colour and update the game logic
                                 break
                     except IndexError:
+                        print('exception occured, safe to ignore')
                         pass # ignore the exception :skull: :skull:
 
                     if areaSettingsBtn.collidepoint(event.pos):
