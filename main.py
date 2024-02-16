@@ -32,14 +32,10 @@ def resize_all(list_of_countries):
         country.set_image(new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
-def fill(surface, color):
-    width, height = surface.get_size()
-    for x in range(width):
-        for y in range(height):
-            a = surface.get_at((x, y))[3]
-            if a > 0:
-                surface.set_at((x, y), pygame.Color(color))
-    return surface
+def fill(country, colour_from, colour_to):
+    pixel_array = pygame.PixelArray(country)
+    pixel_array.replace(colour_from, colour_to)
+    return pixel_array.make_surface()
 
 # choose here whether to start in resizable or full screen
 screen = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN, vsync=0)
@@ -115,10 +111,9 @@ class Country:
         return self.colour
     
     def set_colour(self, colour, x, y):
-        if (colour != Colour.WHITE) and (colour in list_of_colours):
-            self.image = fill(self.image, colour)
+        if colour.value in list_of_colours:
+            self.image = fill(self.image, self.colour.value, colour.value)
             self.set_image(x, y)
-            self.mask = pygame.mask.from_surface(self.new_image)
             self.colour = colour
         return
 
@@ -193,8 +188,10 @@ list_of_players = []
 list_of_colours = [item.value for item in Colour]
 
 # adding all players
-player = Player(0, 'user1', Colour.BLUE)
-list_of_players.append(player)
+player1 = Player(0, 'user1', Colour.BLUE)
+player2 = Player(1, 'user2', Colour.RED)
+list_of_players.append(player1)
+list_of_players.append(player2)
 
 # adding all countries
 for i in range(1, 26):
@@ -418,12 +415,19 @@ class UI:
         screen.fill('black')
         for country in list_of_countries:
             screen.blit(country.get_image(), (0, 0))
+        
+        i = 0
 
         while 1:
             # screen.fill("black") # comment out if you need to do something else
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
             # insert game logic here
+
+            if i == 0:
+                i = 1
+            else:
+                i = 0
 
             areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
                                           122)  # offset 10px from the edge of the screen
@@ -447,10 +451,9 @@ class UI:
                     try:
                         for country in list_of_countries:
                             if country.get_mask().get_at((event.pos[0], event.pos[1])):
-                                print(f'{player.get_username()} has painted {country.get_name()} {player.get_colour().value}')
-                                country.set_colour(player.get_colour().value, screen.get_width(), screen.get_height())
+                                print(f"{list_of_players[i].get_username()} invaded '{country.get_name()}'")
+                                country.set_colour(list_of_players[i].get_colour(), screen.get_width(), screen.get_height())
                                 screen.blit(country.get_image(), (0, 0))
-                                # pygame.display.flip()
                                 # todo: make it change colour and update the game logic
                                 break
                     except IndexError:
