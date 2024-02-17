@@ -176,8 +176,10 @@ update_progress_bar()
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
 imgBackground = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgBackground.jpg').convert(), (display_width, display_height))
 current_background = None
+imgOcean = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgOcean.jpg').convert(), (display_width, display_height))
+current_ocean = None
 screen.blit(imgBackground, (0, 0))
-pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110))
+pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110)) # loading bar
 update_progress_bar()
 
 btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
@@ -440,7 +442,13 @@ class UI:
     def game(self):
         global running, screen
 
+        """
+        everything before the while 1: loop is static UI
+        """
         screen.fill('black')
+
+        screen.blit(imgOcean, (0, 0))
+
         for country in list_of_countries:
             screen.blit(country.get_image(), (0, 0))
 
@@ -450,8 +458,7 @@ class UI:
 
             # insert game logic here
 
-            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
-                                          122)  # offset 10px from the edge of the screen
+            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
             cursor_pos = pygame.mouse.get_pos()
@@ -462,7 +469,7 @@ class UI:
                 if event.type == pygame.QUIT:
                     running = False
                     return
-                
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     """
                     if you are reading this i apologise in advance
@@ -487,8 +494,6 @@ class UI:
                                             neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
                                         stack.pop()
-
-                                    
                                     
                                     else:
                                         stack.clear()
@@ -535,9 +540,9 @@ class UI:
                         self.current_page = self.game_settings
                         return
 
-            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 120, 40))  # prevents FPS values overlapping
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
-            pygame.display.update(pygame.Rect(0, 0, 120, 40))
+            pygame.display.update(pygame.Rect(0, 0, 150, 40))
             pygame.display.flip()
     
     def game_settings(self):
@@ -602,9 +607,9 @@ class UI:
             """
             render only the button area, to improve performance and reduce unnecessary rendering
             """
-            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 120, 40))  # prevents FPS values overlapping
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
-            pygame.display.update(pygame.Rect(0, 0, 120, 40))
+            pygame.display.update(pygame.Rect(0, 0, 150, 40))
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
 
