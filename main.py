@@ -215,7 +215,15 @@ graph1 = {
     list_of_countries[0]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4]],
     list_of_countries[1]: [list_of_countries[0], list_of_countries[2], list_of_countries[5]],
     list_of_countries[2]: [list_of_countries[1], list_of_countries[3], list_of_countries[5]],
-    list_of_countries[3]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4]],
+    list_of_countries[3]: [list_of_countries[0], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[5]],
+    list_of_countries[4]: [list_of_countries[0], list_of_countries[3], list_of_countries[5]],
+    list_of_countries[5]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[6], list_of_countries[7], list_of_countries[8], list_of_countries[9]],
+    list_of_countries[6]: [list_of_countries[5], list_of_countries[7]],
+    list_of_countries[7]: [list_of_countries[5], list_of_countries[6], list_of_countries[8]],
+    list_of_countries[8]: [list_of_countries[5], list_of_countries[7], list_of_countries[9], list_of_countries[10]],
+    list_of_countries[9]: [list_of_countries[5], list_of_countries[8], list_of_countries[10]],
+    list_of_countries[10]: [list_of_countries[8], list_of_countries[9]],
+
 }
 
 stack = []
@@ -479,8 +487,11 @@ class UI:
                                             neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
                                         stack.pop()
+
+                                    
                                     
                                     else:
+                                        stack.clear()
                                         stack.append(country)
                                         for neighbour in graph1.get(country):
                                             if neighbour.get_colour() == player1.get_colour():
@@ -499,6 +510,7 @@ class UI:
                                         screen.blit(neighbour.get_image(), (0, 0))
                                     
                                     country.set_selected()
+                                    stack.clear()
                             
                     except IndexError:
                         print('exception occured, safe to ignore')
