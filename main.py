@@ -1,4 +1,5 @@
 import pygame
+import random
 import os
 from pygame import mixer
 from enum import Enum
@@ -154,6 +155,9 @@ class Player:
     def set_territory(self, country):
         self.territories.append(country)
     
+    def remove_territory(self, country):
+        self.territories.remove(country)
+
     def get_score(self):
         return len(self.territories)
 
@@ -198,15 +202,26 @@ btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').conver
 btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
 update_progress_bar()
 
+list_of_colours = [item.value for item in Colour]
 list_of_countries = []
 list_of_players = []
-list_of_colours = [item.value for item in Colour]
 
 # adding all players
-player1 = Player(0, 'user1', Colour.BLUE)
-player2 = Player(1, 'user2', Colour.RED)
+player1 = Player(0, 'user1', Colour.RED)
+player2 = Player(1, 'user2', Colour.GREEN)
+player3 = Player(2, 'user3', Colour.BLUE)
 list_of_players.append(player1)
 list_of_players.append(player2)
+list_of_players.append(player3)
+current_player = list_of_players[0]
+
+def switch_player():
+    global current_player
+    index = list_of_players.index(current_player) + 1
+
+    if index == len(list_of_players):
+        return list_of_players[0]
+    return list_of_players[index]
 
 # adding all countries
 for i in range(1, len(os.listdir(current_path + '/assets/countries/')) + 1):
@@ -457,16 +472,21 @@ class UI:
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
     def game(self):
-        global running, screen
+        global running, screen, current_player
 
         """
         everything before the while 1: loop is static UI
         """
         screen.fill('black')
-
         screen.blit(imgOcean, (0, 0))
 
+        width, height = screen.get_width(), screen.get_height()
+
         for country in list_of_countries:
+            rnd = random.randint(0, len(list_of_players) - 1)
+            owner = list_of_players[rnd]
+            country.set_owner(owner)
+            country.set_colour(Colour.WHITE, owner.get_colour(), width, height)
             screen.blit(country.get_image(), (0, 0))
 
         while 1:
@@ -496,16 +516,13 @@ class UI:
                     width, height = screen.get_width(), screen.get_height()
                     try:
                         for country in list_of_countries:
-                            if country.get_mask().get_at((event.pos[0], event.pos[1])):
+                            if country.get_mask().get_at((event.pos[0], event.pos[1])) and country.get_owner() == current_player:
+                                print(f"{country.get_name()} is owned by {country.get_owner().get_username()}")
+
                                 current_colour = country.get_colour()
                                 country.set_selected()
-
-                                if current_colour == Colour.WHITE and len(stack) == 0:
-                                    country.set_colour(current_colour, player1.get_colour(), width, height)
-                                    screen.blit(country.get_image(), (0, 0))
-                                    country.set_selected()
                                 
-                                elif current_colour == player1.get_colour():
+                                if current_colour == current_player.get_colour():
                                     if country in stack:
                                         for neighbour in graph1.get(country):
                                             neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
@@ -516,7 +533,7 @@ class UI:
                                         stack.clear()
                                         stack.append(country)
                                         for neighbour in graph1.get(country):
-                                            if neighbour.get_colour() == player1.get_colour():
+                                            if neighbour.get_colour() == current_player.get_colour():
                                                 continue
                                             else:
                                                 neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
@@ -524,13 +541,16 @@ class UI:
 
                                 else:
                                     if country in graph1.get(stack[-1]):
-                                        country.set_colour(Colour.HIGHLIGHTED, player1.get_colour(), width, height)
+                                        country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour(), width, height)
                                         screen.blit(country.get_image(), (0, 0))
 
                                     for neighbour in graph1.get(stack[-1]):
                                         neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                         screen.blit(neighbour.get_image(), (0, 0))
                                     
+                                    # turn is over, switch player
+                                    current_player = switch_player()
+
                                     country.set_selected()
                                     stack.clear()
                             
