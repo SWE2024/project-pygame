@@ -200,6 +200,8 @@ btnBack = pygame.image.load(current_path + '/assets/buttons/btnBack.png').conver
 btnBackHover = pygame.image.load(current_path + '/assets/buttons/btnBackHover.png').convert_alpha()
 btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').convert_alpha()
 btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
+sfxPlay = pygame.mixer.Sound(current_path + '/assets/music/musicPlay.mp3') # play effect with sfxPlay.play()
+sfxConquer = pygame.mixer.Sound(current_path + '/assets/music/musicConquer.mp3') # play effect with sfxConquer.play()
 update_progress_bar()
 
 list_of_colours = [item.value for item in Colour]
@@ -339,6 +341,7 @@ class UI:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaPlayBtn.collidepoint(event.pos):
+                        sfxPlay.play()
                         self.current_page = self.game
                         resize_all(list_of_countries)
                         volume = mixer.music.get_volume()
@@ -545,6 +548,8 @@ class UI:
 
                                 else:
                                     if country in graph1.get(stack[-1]):
+                                        # country has been taken
+                                        sfxConquer.play()
                                         country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour(), width, height)
                                         screen.blit(country.get_image(), (0, 0))
 
