@@ -517,11 +517,15 @@ class UI:
                     try:
                         for country in list_of_countries:
                             if country.get_mask().get_at((event.pos[0], event.pos[1])) and country.get_owner() == current_player:
-                                print(f"{country.get_name()} is owned by {country.get_owner().get_username()}")
+                                if len(stack) > 0:
+                                    for neighbour in graph1.get(stack[-1]):
+                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                    stack.pop()
 
                                 current_colour = country.get_colour()
                                 country.set_selected()
-                                
+
                                 if current_colour == current_player.get_colour():
                                     if country in stack:
                                         for neighbour in graph1.get(country):
