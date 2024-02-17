@@ -27,6 +27,8 @@ def resize_all(list_of_countries):
     new_width = screen.get_width()
     new_height = screen.get_height()
     screen.fill('black')
+    current_ocean = pygame.transform.scale(imgOcean, (new_width, new_height))
+    screen.blit(current_ocean, (0, 0))
 
     for country in list_of_countries:
         country.set_image(new_width, new_height)
