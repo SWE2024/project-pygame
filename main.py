@@ -475,19 +475,24 @@ class UI:
                                     country.set_selected()
                                 
                                 elif current_colour == player1.get_colour():
-                                    stack.append(country)
-                                    for neighbour in graph1.get(country):
-                                        if neighbour.get_colour() == player1.get_colour():
-                                            continue
-                                        else:
-                                            neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                    if country in stack:
+                                        for neighbour in graph1.get(country):
+                                            neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
+                                        stack.pop()
+                                    
+                                    else:
+                                        stack.append(country)
+                                        for neighbour in graph1.get(country):
+                                            if neighbour.get_colour() == player1.get_colour():
+                                                continue
+                                            else:
+                                                neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                                screen.blit(neighbour.get_image(), (0, 0))
 
                                 else:
-                                    print(stack[-1])
                                     if country in graph1.get(stack[-1]):
                                         country.set_colour(Colour.HIGHLIGHTED, player1.get_colour(), width, height)
-                                        print(f"setting {country.get_name()} to {country.get_colour()}")
                                         screen.blit(country.get_image(), (0, 0))
 
                                     for neighbour in graph1.get(stack[-1]):
@@ -495,7 +500,6 @@ class UI:
                                         neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                         screen.blit(neighbour.get_image(), (0, 0))
                                     
-                                    #stack.clear()
                                     country.set_selected()
                             
                     except IndexError:
