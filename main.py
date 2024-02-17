@@ -27,6 +27,8 @@ def resize_all(list_of_countries):
     new_width = screen.get_width()
     new_height = screen.get_height()
     screen.fill('black')
+    current_ocean = pygame.transform.scale(imgOcean, (new_width, new_height))
+    screen.blit(current_ocean, (0, 0))
 
     for country in list_of_countries:
         country.set_image(new_width, new_height)
@@ -56,6 +58,7 @@ class FPS:
 
 class Colour(Enum):
     WHITE = pygame.color.Color(255, 255, 255, 255) # default value
+    HIGHLIGHTED = pygame.color.Color(191, 191, 191, 255)
 
     RED = pygame.color.Color(255, 0, 0, 255)
     GREEN = pygame.color.Color(0, 255, 0, 255)
@@ -69,6 +72,7 @@ class Country:
     no_of_troops = 0
     owner = None # references the Player class that owns the country
     colour = Colour.WHITE
+    selected = False
 
     def __init__(self, id, name, image, owner):
         self.id = id
@@ -110,12 +114,21 @@ class Country:
     def get_colour(self):
         return self.colour
     
-    def set_colour(self, colour, x, y):
-        if colour.value in list_of_colours:
-            self.image = fill(self.image, self.colour.value, colour.value)
+    def set_colour(self, colour_from, colour_to, x, y):
+        if colour_to.value in list_of_colours:
+            self.image = fill(self.image, colour_from.value, colour_to.value)
             self.set_image(x, y)
-            self.colour = colour
+            if colour_to == Colour.HIGHLIGHTED:
+                return
+            else:
+                self.colour = colour_to
         return
+    
+    def get_selected(self):
+        return self.selected
+    
+    def set_selected(self):
+        self.selected = not self.selected
 
 class Player:
     id = 0
@@ -165,8 +178,10 @@ update_progress_bar()
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
 imgBackground = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgBackground.jpg').convert(), (display_width, display_height))
 current_background = None
+imgOcean = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgOcean.jpg').convert(), (display_width, display_height))
+current_ocean = None
 screen.blit(imgBackground, (0, 0))
-pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110))
+pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110)) # loading bar
 update_progress_bar()
 
 btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
@@ -194,11 +209,43 @@ list_of_players.append(player1)
 list_of_players.append(player2)
 
 # adding all countries
-for i in range(1, 26):
+for i in range(1, len(os.listdir(current_path + '/assets/countries/')) + 1):
     country_no = f"{i}"
     country = Country(country_no, f"killzone #{country_no}", pygame.image.load(current_path + f'/assets/countries/country{country_no}.png').convert_alpha(), None)
     list_of_countries.append(country)
     update_progress_bar()
+
+graph1 = {
+    list_of_countries[0]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4]],
+    list_of_countries[1]: [list_of_countries[0], list_of_countries[2], list_of_countries[5]],
+    list_of_countries[2]: [list_of_countries[1], list_of_countries[3], list_of_countries[5]],
+    list_of_countries[3]: [list_of_countries[0], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[5]],
+    list_of_countries[4]: [list_of_countries[0], list_of_countries[3], list_of_countries[5]],
+    list_of_countries[5]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[6], list_of_countries[7], list_of_countries[8], list_of_countries[9]],
+    list_of_countries[6]: [list_of_countries[5], list_of_countries[7]],
+    list_of_countries[7]: [list_of_countries[5], list_of_countries[6], list_of_countries[8]],
+    list_of_countries[8]: [list_of_countries[5], list_of_countries[7], list_of_countries[9], list_of_countries[10]],
+    list_of_countries[9]: [list_of_countries[5], list_of_countries[8], list_of_countries[10]],
+    list_of_countries[10]: [list_of_countries[8], list_of_countries[9]],
+    list_of_countries[11]: [list_of_countries[12]],
+    list_of_countries[12]: [list_of_countries[11], list_of_countries[13]],
+    list_of_countries[13]: [list_of_countries[12], list_of_countries[14], list_of_countries[15]],
+    list_of_countries[14]: [list_of_countries[13], list_of_countries[15], list_of_countries[16]],
+    list_of_countries[15]: [list_of_countries[13], list_of_countries[16], list_of_countries[17], list_of_countries[18]],
+    list_of_countries[16]: [list_of_countries[14], list_of_countries[15], list_of_countries[18], list_of_countries[19]],
+    list_of_countries[17]: [list_of_countries[15], list_of_countries[18]],
+    list_of_countries[18]: [list_of_countries[15], list_of_countries[16], list_of_countries[17], list_of_countries[19]],
+    list_of_countries[19]: [list_of_countries[16], list_of_countries[18]],
+    list_of_countries[20]: [list_of_countries[21]],
+    list_of_countries[21]: [list_of_countries[20], list_of_countries[22]],
+    list_of_countries[22]: [list_of_countries[21], list_of_countries[23], list_of_countries[24]],
+    list_of_countries[23]: [list_of_countries[22], list_of_countries[24], list_of_countries[26]],
+    list_of_countries[24]: [list_of_countries[22], list_of_countries[23]],
+    list_of_countries[25]: [list_of_countries[26]],
+    list_of_countries[26]: [list_of_countries[23], list_of_countries[25]],
+}
+
+stack = []
 
 # frame dependent physics setup
 clock = pygame.time.Clock()
@@ -412,11 +459,15 @@ class UI:
     def game(self):
         global running, screen
 
+        """
+        everything before the while 1: loop is static UI
+        """
         screen.fill('black')
+
+        screen.blit(imgOcean, (0, 0))
+
         for country in list_of_countries:
             screen.blit(country.get_image(), (0, 0))
-        
-        i = 0
 
         while 1:
             # screen.fill("black") # comment out if you need to do something else
@@ -424,13 +475,7 @@ class UI:
 
             # insert game logic here
 
-            if i == 0:
-                i = 1
-            else:
-                i = 0
-
-            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
-                                          122)  # offset 10px from the edge of the screen
+            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
             cursor_pos = pygame.mouse.get_pos()
@@ -441,21 +486,54 @@ class UI:
                 if event.type == pygame.QUIT:
                     running = False
                     return
-                
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     """
                     if you are reading this i apologise in advance
                     there must be about 50 better ways of doing
                     the exact same thing
                     """
+                    width, height = screen.get_width(), screen.get_height()
                     try:
                         for country in list_of_countries:
                             if country.get_mask().get_at((event.pos[0], event.pos[1])):
-                                print(f"{list_of_players[i].get_username()} invaded '{country.get_name()}'")
-                                country.set_colour(list_of_players[i].get_colour(), screen.get_width(), screen.get_height())
-                                screen.blit(country.get_image(), (0, 0))
-                                # todo: make it change colour and update the game logic
-                                break
+                                current_colour = country.get_colour()
+                                country.set_selected()
+
+                                if current_colour == Colour.WHITE and len(stack) == 0:
+                                    country.set_colour(current_colour, player1.get_colour(), width, height)
+                                    screen.blit(country.get_image(), (0, 0))
+                                    country.set_selected()
+                                
+                                elif current_colour == player1.get_colour():
+                                    if country in stack:
+                                        for neighbour in graph1.get(country):
+                                            neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                            screen.blit(neighbour.get_image(), (0, 0))
+                                        stack.pop()
+                                    
+                                    else:
+                                        stack.clear()
+                                        stack.append(country)
+                                        for neighbour in graph1.get(country):
+                                            if neighbour.get_colour() == player1.get_colour():
+                                                continue
+                                            else:
+                                                neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                                screen.blit(neighbour.get_image(), (0, 0))
+
+                                else:
+                                    if country in graph1.get(stack[-1]):
+                                        country.set_colour(Colour.HIGHLIGHTED, player1.get_colour(), width, height)
+                                        screen.blit(country.get_image(), (0, 0))
+
+                                    for neighbour in graph1.get(stack[-1]):
+                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                    
+                                    country.set_selected()
+                                    stack.clear()
+                            
                     except IndexError:
                         print('exception occured, safe to ignore')
                         pass # ignore the exception :skull: :skull:
@@ -479,9 +557,9 @@ class UI:
                         self.current_page = self.game_settings
                         return
 
-            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 120, 40))  # prevents FPS values overlapping
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
-            pygame.display.update(pygame.Rect(0, 0, 120, 40))
+            pygame.display.update(pygame.Rect(0, 0, 150, 40))
             pygame.display.flip()
     
     def game_settings(self):
@@ -546,9 +624,9 @@ class UI:
             """
             render only the button area, to improve performance and reduce unnecessary rendering
             """
-            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 120, 40))  # prevents FPS values overlapping
+            pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
-            pygame.display.update(pygame.Rect(0, 0, 120, 40))
+            pygame.display.update(pygame.Rect(0, 0, 150, 40))
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
 
