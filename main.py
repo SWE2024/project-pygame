@@ -200,6 +200,8 @@ btnBack = pygame.image.load(current_path + '/assets/buttons/btnBack.png').conver
 btnBackHover = pygame.image.load(current_path + '/assets/buttons/btnBackHover.png').convert_alpha()
 btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').convert_alpha()
 btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
+sfxPlay = pygame.mixer.Sound(current_path + '/assets/music/musicPlay.mp3') # play effect with sfxPlay.play()
+sfxConquer = pygame.mixer.Sound(current_path + '/assets/music/musicConquer.mp3') # play effect with sfxConquer.play()
 update_progress_bar()
 
 list_of_colours = [item.value for item in Colour]
@@ -233,7 +235,7 @@ for i in range(1, len(os.listdir(current_path + '/assets/countries/')) + 1):
 graph1 = {
     list_of_countries[0]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4]],
     list_of_countries[1]: [list_of_countries[0], list_of_countries[2], list_of_countries[5]],
-    list_of_countries[2]: [list_of_countries[1], list_of_countries[3], list_of_countries[5]],
+    list_of_countries[2]: [list_of_countries[0], list_of_countries[1], list_of_countries[3], list_of_countries[5]],
     list_of_countries[3]: [list_of_countries[0], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[5]],
     list_of_countries[4]: [list_of_countries[0], list_of_countries[3], list_of_countries[5]],
     list_of_countries[5]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[6], list_of_countries[7], list_of_countries[8], list_of_countries[9]],
@@ -339,6 +341,7 @@ class UI:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaPlayBtn.collidepoint(event.pos):
+                        sfxPlay.play()
                         self.current_page = self.game
                         resize_all(list_of_countries)
                         volume = mixer.music.get_volume()
@@ -486,7 +489,7 @@ class UI:
             rnd = random.randint(0, len(list_of_players) - 1)
             owner = list_of_players[rnd]
             country.set_owner(owner)
-            country.set_colour(Colour.WHITE, owner.get_colour(), width, height)
+            country.set_colour(country.get_colour(), owner.get_colour(), width, height)
             screen.blit(country.get_image(), (0, 0))
 
         while 1:
@@ -516,43 +519,51 @@ class UI:
                     width, height = screen.get_width(), screen.get_height()
                     try:
                         for country in list_of_countries:
-                            if country.get_mask().get_at((event.pos[0], event.pos[1])) and country.get_owner() == current_player:
-                                print(f"{country.get_name()} is owned by {country.get_owner().get_username()}")
-
-                                current_colour = country.get_colour()
-                                country.set_selected()
-                                
-                                if current_colour == current_player.get_colour():
-                                    if country in stack:
-                                        for neighbour in graph1.get(country):
+                            if country.get_mask().get_at((event.pos[0], event.pos[1])):
+                                if country.get_owner() == current_player: # if an owned country has been clicked
+                                    if len(stack) > 0: # stack contains previously clicked country, if any
+                                        for neighbour in graph1.get(stack[-1]):
                                             neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
-                                        stack.pop()
-                                    
+                                            pygame.display.flip()
+                                        stack.clear() # unhighlights all areas if owned area clicked twice
+
                                     else:
-                                        stack.clear()
-                                        stack.append(country)
-                                        for neighbour in graph1.get(country):
-                                            if neighbour.get_colour() == current_player.get_colour():
-                                                continue
+                                        current_colour = country.get_colour()
+                                        country.set_selected()
+
+                                        if current_colour == current_player.get_colour():
+                                            if country in stack:
+                                                for neighbour in graph1.get(country):
+                                                    neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                                    screen.blit(neighbour.get_image(), (0, 0))
+                                                stack.pop()
+                                            
                                             else:
-                                                neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
-                                                screen.blit(neighbour.get_image(), (0, 0))
+                                                stack.clear()
+                                                stack.append(country)
+                                                for neighbour in graph1.get(country):
+                                                    if neighbour.get_colour() == current_player.get_colour():
+                                                        continue
+                                                    else:
+                                                        neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                                        screen.blit(neighbour.get_image(), (0, 0))
 
                                 else:
+                                    # country was available to take and has been clicked
                                     if country in graph1.get(stack[-1]):
+                                        # country has been taken
+                                        sfxConquer.play()
                                         country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour(), width, height)
                                         screen.blit(country.get_image(), (0, 0))
 
-                                    for neighbour in graph1.get(stack[-1]):
-                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
-                                        screen.blit(neighbour.get_image(), (0, 0))
-                                    
-                                    # turn is over, switch player
-                                    current_player = switch_player()
-
-                                    country.set_selected()
-                                    stack.clear()
+                                        for neighbour in graph1.get(stack[-1]):
+                                            neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                            screen.blit(neighbour.get_image(), (0, 0))
+                                        
+                                        # turn is over, switch player
+                                        country.set_owner(current_player)
+                                        current_player = switch_player()
                             
                     except IndexError:
                         print('exception occured, safe to ignore')
