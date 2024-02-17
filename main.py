@@ -1,6 +1,5 @@
 import pygame
 import os
-import time
 from pygame import mixer
 from enum import Enum
 
@@ -496,7 +495,6 @@ class UI:
                                         screen.blit(country.get_image(), (0, 0))
 
                                     for neighbour in graph1.get(stack[-1]):
-                                        print(f"setting {neighbour.get_name()} to {neighbour.get_colour()}")
                                         neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                         screen.blit(neighbour.get_image(), (0, 0))
                                     
@@ -509,7 +507,6 @@ class UI:
                     if areaSettingsBtn.collidepoint(event.pos):
                             self.current_page = self.game_settings
                             return
-                    time.sleep(1)
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == self.fullscreen_key:
