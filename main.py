@@ -512,7 +512,6 @@ class UI:
                                         for neighbour in graph1.get(stack[-1]):
                                             neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
-                                            pygame.display.flip()
                                         stack.clear() # unhighlights all areas if owned area clicked twice
 
                                     else:
