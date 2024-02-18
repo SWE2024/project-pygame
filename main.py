@@ -64,6 +64,7 @@ class Colour(Enum):
     RED = pygame.color.Color(255, 0, 0, 255)
     GREEN = pygame.color.Color(0, 255, 0, 255)
     BLUE = pygame.color.Color(0, 0, 255, 255)
+    YELLOW = pygame.color.Color(255, 255, 0, 255)
 
 class Country:
     id = 0
@@ -169,6 +170,8 @@ LOADING FILES
 x = 0
 def update_progress_bar():
     global x
+    if x == 1:
+        return
     pygame.draw.rect(screen, (255, 215, 0, 255), pygame.Rect(150, display_height * 0.75, (display_width * x) - 300, 100))
     pygame.display.flip()
     x += (1 / 29)
@@ -177,7 +180,6 @@ current_path = os.path.dirname(__file__)
 icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
 pygame.display.set_caption('World Conquest')
 pygame.display.set_icon(icon)
-update_progress_bar()
 
 imgLogo = pygame.image.load(current_path + '/assets/imgLogo.png').convert_alpha()
 imgBackground = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgBackground.jpg').convert(), (display_width, display_height))
@@ -186,7 +188,6 @@ imgOcean = pygame.transform.scale(pygame.image.load(current_path + '/assets/imgO
 current_ocean = None
 screen.blit(imgBackground, (0, 0))
 pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110)) # loading bar
-update_progress_bar()
 
 btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
 btnPlayHover = pygame.image.load(current_path + '/assets/buttons/btnPlayHover.png').convert_alpha()
@@ -202,7 +203,6 @@ btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').conver
 btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
 sfxPlay = pygame.mixer.Sound(current_path + '/assets/music/musicPlay.mp3') # play effect with sfxPlay.play()
 sfxConquer = pygame.mixer.Sound(current_path + '/assets/music/musicConquer.mp3') # play effect with sfxConquer.play()
-update_progress_bar()
 
 list_of_colours = [item.value for item in Colour]
 list_of_countries = []
@@ -212,55 +212,70 @@ list_of_players = []
 player1 = Player(0, 'user1', Colour.RED)
 player2 = Player(1, 'user2', Colour.GREEN)
 player3 = Player(2, 'user3', Colour.BLUE)
+player4 = Player(3, 'user4', Colour.YELLOW)
 list_of_players.append(player1)
 list_of_players.append(player2)
 list_of_players.append(player3)
+list_of_players.append(player4)
 current_player = list_of_players[0]
 
 def switch_player():
     global current_player
-    index = list_of_players.index(current_player) + 1
+    next_index = list_of_players.index(current_player) + 1
 
-    if index == len(list_of_players):
+    if next_index == len(list_of_players):
         return list_of_players[0]
-    return list_of_players[index]
+    else:
+        return list_of_players[next_index]
 
 # adding all countries
-for i in range(1, len(os.listdir(current_path + '/assets/countries/')) + 1):
+map_number = 1 # get the user to choose this number in a later revision (you can currently choose between 1 and 2)
+connections = None
+for i in range(0, len(os.listdir(current_path + f'/assets/countries/map{map_number}/'))):
+    if i == 0:
+        connections = pygame.image.load(current_path + f'/assets/countries/map{map_number}/connections.png').convert_alpha()
+        continue
     country_no = f"{i}"
-    country = Country(country_no, f"killzone #{country_no}", pygame.image.load(current_path + f'/assets/countries/country{country_no}.png').convert_alpha(), None)
+    country = Country(country_no, f"killzone #{country_no}", pygame.image.load(current_path + f'/assets/countries/map{map_number}/country{country_no}.png').convert_alpha(), None)
     list_of_countries.append(country)
     update_progress_bar()
 
-graph1 = {
-    list_of_countries[0]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4]],
-    list_of_countries[1]: [list_of_countries[0], list_of_countries[2], list_of_countries[5]],
-    list_of_countries[2]: [list_of_countries[0], list_of_countries[1], list_of_countries[3], list_of_countries[5]],
-    list_of_countries[3]: [list_of_countries[0], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[5]],
-    list_of_countries[4]: [list_of_countries[0], list_of_countries[3], list_of_countries[5]],
-    list_of_countries[5]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4],list_of_countries[6], list_of_countries[7], list_of_countries[8], list_of_countries[9]],
-    list_of_countries[6]: [list_of_countries[5], list_of_countries[7]],
-    list_of_countries[7]: [list_of_countries[5], list_of_countries[6], list_of_countries[8]],
-    list_of_countries[8]: [list_of_countries[5], list_of_countries[7], list_of_countries[9], list_of_countries[10]],
-    list_of_countries[9]: [list_of_countries[5], list_of_countries[8], list_of_countries[10]],
-    list_of_countries[10]: [list_of_countries[8], list_of_countries[9]],
-    list_of_countries[11]: [list_of_countries[12]],
-    list_of_countries[12]: [list_of_countries[11], list_of_countries[13]],
-    list_of_countries[13]: [list_of_countries[12], list_of_countries[14], list_of_countries[15]],
-    list_of_countries[14]: [list_of_countries[13], list_of_countries[15], list_of_countries[16]],
-    list_of_countries[15]: [list_of_countries[13], list_of_countries[16], list_of_countries[17], list_of_countries[18]],
-    list_of_countries[16]: [list_of_countries[14], list_of_countries[15], list_of_countries[18], list_of_countries[19]],
-    list_of_countries[17]: [list_of_countries[15], list_of_countries[18]],
-    list_of_countries[18]: [list_of_countries[15], list_of_countries[16], list_of_countries[17], list_of_countries[19]],
-    list_of_countries[19]: [list_of_countries[16], list_of_countries[18]],
-    list_of_countries[20]: [list_of_countries[21]],
-    list_of_countries[21]: [list_of_countries[20], list_of_countries[22]],
-    list_of_countries[22]: [list_of_countries[21], list_of_countries[23], list_of_countries[24]],
-    list_of_countries[23]: [list_of_countries[22], list_of_countries[24], list_of_countries[26]],
-    list_of_countries[24]: [list_of_countries[22], list_of_countries[23]],
-    list_of_countries[25]: [list_of_countries[26]],
-    list_of_countries[26]: [list_of_countries[23], list_of_countries[25]],
-}
+graph = {}
+match map_number:
+    case 1:
+        graph = {
+            #finish
+        }
+    case 2:
+        graph = {
+            list_of_countries[0]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4]],
+            list_of_countries[1]: [list_of_countries[0], list_of_countries[2], list_of_countries[5]],
+            list_of_countries[2]: [list_of_countries[0], list_of_countries[1], list_of_countries[3], list_of_countries[5]],
+            list_of_countries[3]: [list_of_countries[0], list_of_countries[2], list_of_countries[4], list_of_countries[5]],
+            list_of_countries[4]: [list_of_countries[0], list_of_countries[3], list_of_countries[5], list_of_countries[17]],
+            list_of_countries[5]: [list_of_countries[1], list_of_countries[2], list_of_countries[3], list_of_countries[4], list_of_countries[6], list_of_countries[7], list_of_countries[8], list_of_countries[9]],
+            list_of_countries[6]: [list_of_countries[5], list_of_countries[7]],
+            list_of_countries[7]: [list_of_countries[5], list_of_countries[6], list_of_countries[8], list_of_countries[20]],
+            list_of_countries[8]: [list_of_countries[5], list_of_countries[7], list_of_countries[9], list_of_countries[10]],
+            list_of_countries[9]: [list_of_countries[5], list_of_countries[8], list_of_countries[10]],
+            list_of_countries[10]: [list_of_countries[8], list_of_countries[9], list_of_countries[24]],
+            list_of_countries[11]: [list_of_countries[12]],
+            list_of_countries[12]: [list_of_countries[11], list_of_countries[13]],
+            list_of_countries[13]: [list_of_countries[12], list_of_countries[14], list_of_countries[15]],
+            list_of_countries[14]: [list_of_countries[13], list_of_countries[15], list_of_countries[16]],
+            list_of_countries[15]: [list_of_countries[13], list_of_countries[14], list_of_countries[16], list_of_countries[17], list_of_countries[18]],
+            list_of_countries[16]: [list_of_countries[14], list_of_countries[15], list_of_countries[18], list_of_countries[19]],
+            list_of_countries[17]: [list_of_countries[4], list_of_countries[15], list_of_countries[18]],
+            list_of_countries[18]: [list_of_countries[15], list_of_countries[16], list_of_countries[17], list_of_countries[19], list_of_countries[24]],
+            list_of_countries[19]: [list_of_countries[16], list_of_countries[18], list_of_countries[26]],
+            list_of_countries[20]: [list_of_countries[7], list_of_countries[21]],
+            list_of_countries[21]: [list_of_countries[20], list_of_countries[22]],
+            list_of_countries[22]: [list_of_countries[21], list_of_countries[23], list_of_countries[24]],
+            list_of_countries[23]: [list_of_countries[22], list_of_countries[24], list_of_countries[26]],
+            list_of_countries[24]: [list_of_countries[10], list_of_countries[18], list_of_countries[22], list_of_countries[23]],
+            list_of_countries[25]: [list_of_countries[26]],
+            list_of_countries[26]: [list_of_countries[19], list_of_countries[23], list_of_countries[25]],
+        }
 
 stack = []
 
@@ -469,6 +484,7 @@ class UI:
         """
         screen.fill('black')
         screen.blit(imgOcean, (0, 0))
+        screen.blit(connections, (0, 0))
 
         width, height = screen.get_width(), screen.get_height()
 
@@ -504,60 +520,52 @@ class UI:
                     the exact same thing
                     """
                     width, height = screen.get_width(), screen.get_height()
-                    try:
-                        for country in list_of_countries:
-                            if country.get_mask().get_at((event.pos[0], event.pos[1])):
-                                if country.get_owner() == current_player: # if an owned country has been clicked
-                                    if len(stack) > 0: # stack contains previously clicked country, if any
-                                        for neighbour in graph1.get(stack[-1]):
-                                            neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
-                                            screen.blit(neighbour.get_image(), (0, 0))
-                                        stack.clear() # unhighlights all areas if owned area clicked twice
+                    for country in list_of_countries:
+                        if country.get_mask().get_at((event.pos[0], event.pos[1])):
+                            try:
+                                if stack[-1] == country:
+                                    # clicked the same country
+                                    for neighbour in graph[country]:
+                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                    stack.clear() # unhighlights all areas if owned area clicked twice
+                                
+                                elif (country.get_colour() != current_player.get_colour()) and (country in graph.get(stack[-1])):
+                                    # attacking a country
+                                    sfxConquer.play()
+                                    country.set_owner(current_player)
+                                    country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour(), width, height)
+                                    for neighbour in graph[stack[-1]]:
+                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                    current_player = switch_player()
+                                    stack.clear() # unhighlights all areas if owned area clicked twice
 
-                                    else:
-                                        current_colour = country.get_colour()
-                                        country.set_selected()
-
-                                        if current_colour == current_player.get_colour():
-                                            if country in stack:
-                                                for neighbour in graph1.get(country):
-                                                    neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
-                                                    screen.blit(neighbour.get_image(), (0, 0))
-                                                stack.pop()
-                                            
-                                            else:
-                                                stack.clear()
-                                                stack.append(country)
-                                                for neighbour in graph1.get(country):
-                                                    if neighbour.get_colour() == current_player.get_colour():
-                                                        continue
-                                                    else:
-                                                        neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
-                                                        screen.blit(neighbour.get_image(), (0, 0))
+                                elif (stack[-1].get_owner() == current_player) and (country not in graph.get(stack[-1])):
+                                    # switching between unconnected countries
+                                    for neighbour in graph[stack[-1]]:
+                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                    for neighbour in graph[country]:
+                                        neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                    stack.append(country)
 
                                 else:
-                                    # country was available to take and has been clicked
-                                    if country in graph1.get(stack[-1]):
-                                        # country has been taken
-                                        sfxConquer.play()
-                                        country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour(), width, height)
-                                        screen.blit(country.get_image(), (0, 0))
+                                    pass
 
-                                        for neighbour in graph1.get(stack[-1]):
-                                            neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                            except IndexError: 
+                                # nothing is already selected
+                                if country.get_colour() == current_player.get_colour():
+                                    for neighbour in graph[country]:
+                                        if neighbour.get_colour() != current_player.get_colour():
+                                            neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
-                                        
-                                        # turn is over, switch player
-                                        country.set_owner(current_player)
-                                        current_player = switch_player()
-                            
-                    except IndexError:
-                        print('exception occured, safe to ignore')
-                        pass # ignore the exception :skull: :skull:
+                                    stack.append(country)                            
 
                     if areaSettingsBtn.collidepoint(event.pos):
-                            self.current_page = self.game_settings
-                            return
+                        self.current_page = self.game_settings
+                        return
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == self.fullscreen_key:
