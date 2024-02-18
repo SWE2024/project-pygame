@@ -11,7 +11,7 @@ INITIALISE
 # pygame and audio setup
 pygame.mixer.pre_init(44100, 16, 2, 4096)
 pygame.init()
-pygame.mixer.music.set_volume(0.33)
+pygame.mixer.music.set_volume(0.3)
 
 def change_music(music_path):
     mixer.music.unload()
@@ -206,6 +206,8 @@ btnBack = pygame.image.load(current_path + '/assets/buttons/btnBack.png').conver
 btnBackHover = pygame.image.load(current_path + '/assets/buttons/btnBackHover.png').convert_alpha()
 btnQuit = pygame.image.load(current_path + '/assets/buttons/btnQuit.png').convert_alpha()
 btnQuitHover = pygame.image.load(current_path + '/assets/buttons/btnQuitHover.png').convert_alpha()
+clickArrow = pygame.image.load(current_path + '/assets/buttons/clickArrow.png').convert_alpha()
+
 sfxPlay = pygame.mixer.Sound(current_path + '/assets/music/musicPlay.mp3') # play effect with sfxPlay.play()
 sfxConquer = pygame.mixer.Sound(current_path + '/assets/music/musicConquer.mp3') # play effect with sfxConquer.play()
 
@@ -399,8 +401,11 @@ class UI:
             cursor_pos = pygame.mouse.get_pos()
             if areaPlayBtn.collidepoint(cursor_pos):
                 screen.blit(btnPlayHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
+                screen.blit(clickArrow, (screen.get_width() * 0.5 - 235.5, screen.get_height() * 0.5 - 47.5))
             elif areaExitBtn.collidepoint(cursor_pos):
                 screen.blit(btnExitHover, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
+                screen.blit(clickArrow, (screen.get_width() * 0.5 - 235.5, screen.get_height() * 0.5 + 47.5))
+
             elif areaSettingsBtn.collidepoint(cursor_pos):
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
@@ -485,7 +490,8 @@ class UI:
         while 1:
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
-            areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 15, 132, 289, 90)
+            areaAudioBtnPlus = pygame.Rect(screen.get_width() - 289 - 15 + 144.5, 132, 144.5, 90) # +144.5 to make as its half of 289
+            areaAudioBtnMinus = pygame.Rect(screen.get_width() - 289 - 15, 132, 144.5, 90)
             screen.blit(btnAudio, (screen.get_width() - 289 - 15, 132))
 
             areaBackBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
@@ -496,7 +502,7 @@ class UI:
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
             cursor_pos = pygame.mouse.get_pos()
-            if areaAudioBtn.collidepoint(cursor_pos):
+            if areaAudioBtnPlus.collidepoint(cursor_pos) or areaAudioBtnMinus.collidepoint(cursor_pos):
                 screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
             elif areaBackBtn.collidepoint(cursor_pos):
                 screen.blit(btnBackHover, (screen.get_width() - 289 - 15, 230))
@@ -509,13 +515,19 @@ class UI:
                     return
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if areaAudioBtn.collidepoint(event.pos):
-                        volume = mixer.music.get_volume()
-                        if volume > 0:
-                            mixer.music.set_volume(0)
-                        else:
-                            mixer.music.set_volume(0.33)
+                    volume = mixer.music.get_volume()
+                    # increase the volume
+                    if areaAudioBtnPlus.collidepoint(event.pos):
+                        mixer.music.set_volume(volume + 0.1)
                         return
+                    #Here to make sure you can set the volume to 0
+                    if volume < 0.1:
+                        mixer.music.set_volume(0)
+                    # decrease the volume    
+                    if areaAudioBtnMinus.collidepoint(event.pos):
+                        mixer.music.set_volume(volume - 0.1)
+                        return
+            
                     if areaBackBtn.collidepoint(event.pos) or areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.menu
                         return
@@ -672,7 +684,8 @@ class UI:
         while 1:
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
-            areaAudioBtn = pygame.Rect(screen.get_width() - 289 - 15, 132, 289, 90)
+            areaAudioBtnPlus = pygame.Rect(screen.get_width() - 289 - 15 + 144.5, 132, 144.5, 90) # +144.5 to make as its half of 289
+            areaAudioBtnMinus = pygame.Rect(screen.get_width() - 289 - 15, 132, 144.5, 90)
             screen.blit(btnAudio, (screen.get_width() - 289 - 15, 132))
 
             areaQuitBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
@@ -683,7 +696,7 @@ class UI:
 
 
             cursor_pos = pygame.mouse.get_pos()
-            if areaAudioBtn.collidepoint(cursor_pos):
+            if areaAudioBtnPlus.collidepoint(cursor_pos) or areaAudioBtnMinus.collidepoint(cursor_pos):
                 screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
             elif areaQuitBtn.collidepoint(cursor_pos):
                 screen.blit(btnQuitHover, (screen.get_width() - 289 - 15, 230))
@@ -697,12 +710,17 @@ class UI:
                     return
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if areaAudioBtn.collidepoint(event.pos):
-                        volume = mixer.music.get_volume()
-                        if volume > 0:
-                            mixer.music.set_volume(0)
-                        else:
-                            mixer.music.set_volume(0.33)
+                    volume = mixer.music.get_volume()
+                    # increase the volume
+                    if areaAudioBtnPlus.collidepoint(event.pos):
+                        mixer.music.set_volume(volume + 0.1)
+                        return
+                    #Here to make sure you can set the volume to 0
+                    if volume < 0.1:
+                        mixer.music.set_volume(0)
+                    # decrease the volume    
+                    if areaAudioBtnMinus.collidepoint(event.pos):
+                        mixer.music.set_volume(volume - 0.1)
                         return
                     if areaQuitBtn.collidepoint(event.pos):
                         self.current_page = self.menu
