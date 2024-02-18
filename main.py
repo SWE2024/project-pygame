@@ -189,6 +189,8 @@ current_ocean = None
 screen.blit(imgBackground, (0, 0))
 pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(145, display_height * 0.75 - 5, display_width - 290, 110)) # loading bar
 
+btnMap1 = pygame.image.load(current_path + '/assets/buttons/btnMap1.png').convert_alpha()
+btnMap2 = pygame.image.load(current_path + '/assets/buttons/btnMap2.png').convert_alpha()
 btnPlay = pygame.image.load(current_path + '/assets/buttons/btnPlay.png').convert_alpha()
 btnPlayHover = pygame.image.load(current_path + '/assets/buttons/btnPlayHover.png').convert_alpha()
 btnExit = pygame.image.load(current_path + '/assets/buttons/btnExit.png').convert_alpha()
@@ -244,7 +246,50 @@ graph = {}
 match map_number:
     case 1:
         graph = {
-            #finish
+            list_of_countries[0]: [list_of_countries[1], list_of_countries[2], list_of_countries[36]],
+            list_of_countries[1]: [list_of_countries[0], list_of_countries[2], list_of_countries[3], list_of_countries[8]],
+            list_of_countries[2]: [list_of_countries[0], list_of_countries[1], list_of_countries[3], list_of_countries[5]],
+            list_of_countries[3]: [list_of_countries[1], list_of_countries[2], list_of_countries[4], list_of_countries[5], list_of_countries[6], list_of_countries[8]],
+            list_of_countries[4]: [list_of_countries[3], list_of_countries[6], list_of_countries[8]],
+            list_of_countries[5]: [list_of_countries[2], list_of_countries[3], list_of_countries[6], list_of_countries[7]],
+            list_of_countries[6]: [list_of_countries[3], list_of_countries[4], list_of_countries[5], list_of_countries[7]],
+            list_of_countries[7]: [list_of_countries[5], list_of_countries[6], list_of_countries[9]],
+            list_of_countries[8]: [list_of_countries[1], list_of_countries[3], list_of_countries[4], list_of_countries[13]],
+            list_of_countries[9]: [list_of_countries[7], list_of_countries[10], list_of_countries[11]],
+            list_of_countries[10]: [list_of_countries[9], list_of_countries[11], list_of_countries[20]],
+            list_of_countries[11]: [list_of_countries[9], list_of_countries[10], list_of_countries[12]],
+            list_of_countries[12]: [list_of_countries[10], list_of_countries[11]],
+            list_of_countries[13]: [list_of_countries[8], list_of_countries[14], list_of_countries[15]],
+            list_of_countries[14]: [list_of_countries[13], list_of_countries[15], list_of_countries[17], list_of_countries[18]],
+            list_of_countries[15]: [list_of_countries[13], list_of_countries[14], list_of_countries[16], list_of_countries[17]],
+            list_of_countries[16]: [list_of_countries[15], list_of_countries[17], list_of_countries[19], list_of_countries[26], list_of_countries[27], list_of_countries[28]],
+            list_of_countries[17]: [list_of_countries[14], list_of_countries[15], list_of_countries[16], list_of_countries[18], list_of_countries[19]],
+            list_of_countries[18]: [list_of_countries[14], list_of_countries[17], list_of_countries[19], list_of_countries[20]],
+            list_of_countries[19]: [list_of_countries[16], list_of_countries[17], list_of_countries[18], list_of_countries[21], list_of_countries[28]],
+            list_of_countries[20]: [list_of_countries[10], list_of_countries[18], list_of_countries[21], list_of_countries[22], list_of_countries[23]],
+            list_of_countries[21]: [list_of_countries[19], list_of_countries[20], list_of_countries[22], list_of_countries[28]],
+            list_of_countries[22]: [list_of_countries[20], list_of_countries[21], list_of_countries[23], list_of_countries[25], list_of_countries[28]],
+            list_of_countries[23]: [list_of_countries[20], list_of_countries[22], list_of_countries[24]],
+            list_of_countries[24]: [list_of_countries[22], list_of_countries[23], list_of_countries[25]],
+            list_of_countries[25]: [list_of_countries[22], list_of_countries[24]],
+            list_of_countries[26]: [list_of_countries[16], list_of_countries[27], list_of_countries[31], list_of_countries[33]],
+            list_of_countries[27]: [list_of_countries[16], list_of_countries[26], list_of_countries[28], list_of_countries[29], list_of_countries[31]],
+            list_of_countries[28]: [list_of_countries[16], list_of_countries[19], list_of_countries[21], list_of_countries[22], list_of_countries[27], list_of_countries[29]],
+            list_of_countries[29]: [list_of_countries[27], list_of_countries[28], list_of_countries[30], list_of_countries[31]],
+            list_of_countries[30]: [list_of_countries[29], list_of_countries[31], list_of_countries[40]],
+            list_of_countries[31]: [list_of_countries[26], list_of_countries[27], list_of_countries[29], list_of_countries[30], list_of_countries[32], list_of_countries[33]],
+            list_of_countries[32]: [list_of_countries[31], list_of_countries[33], list_of_countries[34], list_of_countries[38], list_of_countries[39]],
+            list_of_countries[33]: [list_of_countries[26], list_of_countries[31], list_of_countries[32], list_of_countries[34], list_of_countries[35]],
+            list_of_countries[34]: [list_of_countries[32], list_of_countries[33], list_of_countries[35], list_of_countries[37], list_of_countries[38]],
+            list_of_countries[35]: [list_of_countries[33], list_of_countries[34], list_of_countries[36], list_of_countries[37]],
+            list_of_countries[36]: [list_of_countries[0], list_of_countries[35], list_of_countries[37]],
+            list_of_countries[37]: [list_of_countries[34], list_of_countries[35], list_of_countries[38]],
+            list_of_countries[38]: [list_of_countries[32], list_of_countries[34], list_of_countries[37], list_of_countries[39]],
+            list_of_countries[39]: [list_of_countries[32], list_of_countries[38]],
+            list_of_countries[40]: [list_of_countries[30], list_of_countries[41]],
+            list_of_countries[41]: [list_of_countries[40], list_of_countries[42], list_of_countries[43]],
+            list_of_countries[42]: [list_of_countries[41], list_of_countries[43]],
+            list_of_countries[43]: [list_of_countries[41], list_of_countries[42]]
         }
     case 2:
         graph = {
@@ -274,7 +319,7 @@ match map_number:
             list_of_countries[23]: [list_of_countries[22], list_of_countries[24], list_of_countries[26]],
             list_of_countries[24]: [list_of_countries[10], list_of_countries[18], list_of_countries[22], list_of_countries[23]],
             list_of_countries[25]: [list_of_countries[26]],
-            list_of_countries[26]: [list_of_countries[19], list_of_countries[23], list_of_countries[25]],
+            list_of_countries[26]: [list_of_countries[19], list_of_countries[23], list_of_countries[25]]
         }
 
 stack = []
@@ -320,25 +365,32 @@ class UI:
     def menu(self):
         # the screen and running variable are defined global
         # the initialization of these variables do not exist in this scope rather outside it.
-        global screen, running
+        global screen, running, map_number
 
         current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
 
         while 1:
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
+            width, height = screen.get_width(), screen.get_height()
+
             screen.blit(current_background, (0, 0))
 
             screen.blit(imgLogo, (screen.get_width() * 0.5 - 363, 20))
 
-            areaPlayBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5, 305, 95)
-            screen.blit(btnPlay, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 - 47.5))
+            areaPlayBtn = pygame.Rect((width * 0.5) - (btnPlay.get_width() * 0.5), (height * 0.5) - (btnPlay.get_height() * 0.5), 305, 95)
+            screen.blit(btnPlay, ((width * 0.5) - (btnPlay.get_width() * 0.5), (height * 0.5) - (btnPlay.get_height() * 0.5)))
 
-            areaExitBtn = pygame.Rect(screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5, 305, 95)
-            screen.blit(btnExit, (screen.get_width() * 0.5 - 152.5, screen.get_height() * 0.5 + 47.5))
+            areaExitBtn = pygame.Rect((width * 0.5) - (btnExit.get_width() * 0.5), (height * 0.5) + (btnExit.get_height() * 0.5), 305, 95)
+            screen.blit(btnExit, ((width * 0.5) - (btnExit.get_width() * 0.5), (height * 0.5) + (btnExit.get_height() * 0.5)))
 
-            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144,
-                                          122)  # offset 10px from the edge of the screen
+            areaMap1Btn = pygame.Rect(0, 0, 540, 780)
+            # screen.blit(btnMap1, (0, 0))
+
+            areaMap2Btn = pygame.Rect(550, 0, 540, 780)
+            # screen.blit(btnMap2, (550, 0))
+
+            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
             screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
             cursor_pos = pygame.mouse.get_pos()
@@ -379,6 +431,36 @@ class UI:
                         """
                         self.current_page = self.menu_settings
                         return
+                    elif areaMap1Btn.collidepoint(event.pos):
+                        print('clicked map 1')
+                        map_number = 1
+                        screen.fill("black")
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip()
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE opening the menu
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
+                        self.current_page = self.menu_settings
+                        return
+                    elif areaMap2Btn.collidepoint(event.pos):
+                        print('clicked map 2')
+                        map_number = 2
+                        screen.fill("black")
+                        current_background.set_alpha(60)
+                        screen.blit(current_background, (0, 0))
+                        pygame.display.flip()
+                        """
+                        ! important !
+                        this lowers the opacity of the background BEFORE opening the menu
+                        this means you do not need to call .set_alpha(60) on each frame
+                        while in the menu, which tanks performance
+                        """
+                        self.current_page = self.menu_settings
+                        return
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == self.fullscreen_key:
@@ -386,12 +468,10 @@ class UI:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = False
-                            resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = True
-                            resize_all(list_of_countries)
 
             # fps.render(screen) # uncomment for debugging
             pygame.display.flip()
@@ -452,7 +532,7 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = False
-                            resize_all(list_of_countries)
+                            self.menu.resize_buttons()
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
@@ -466,7 +546,7 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = True
-                            resize_all(list_of_countries)
+                            self.menu.resize_buttons()
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
