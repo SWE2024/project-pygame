@@ -564,8 +564,10 @@ class UI:
         everything before the while 1: loop is static UI
         """
         screen.fill('black')
-        screen.blit(imgOcean, (0, 0))
-        screen.blit(connections, (0, 0))
+        current_ocean = pygame.transform.scale(imgOcean, (screen.get_width(), screen.get_height()))
+        current_connections = pygame.transform.scale(connections, (screen.get_width(), screen.get_height()))
+        screen.blit(current_ocean, (0, 0))
+        screen.blit(current_connections, (0, 0))
 
         width, height = screen.get_width(), screen.get_height()
 
