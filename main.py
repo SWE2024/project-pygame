@@ -642,8 +642,9 @@ class UI:
                                         neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                         screen.blit(neighbour.get_image(), (0, 0))
                                     for neighbour in graph[country]:
-                                        neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
-                                        screen.blit(neighbour.get_image(), (0, 0))
+                                        if neighbour.get_colour() != current_player.get_colour():
+                                            neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                            screen.blit(neighbour.get_image(), (0, 0))
                                     stack.append(country)
 
                                 else:
