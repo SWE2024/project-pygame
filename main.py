@@ -30,6 +30,8 @@ def resize_all(list_of_countries):
     screen.fill('black')
     current_ocean = pygame.transform.scale(imgOcean, (new_width, new_height))
     screen.blit(current_ocean, (0, 0))
+    current_connections = pygame.transform.scale(connections, (new_width, new_height))
+    screen.blit(current_connections, (0, 0))
 
     for country in list_of_countries:
         country.set_image(new_width, new_height)
@@ -170,11 +172,12 @@ LOADING FILES
 x = 0
 def update_progress_bar():
     global x
-    if x == 1:
+    if x >= 1:
         return
-    pygame.draw.rect(screen, (255, 215, 0, 255), pygame.Rect(150, display_height * 0.75, (display_width * x) - 300, 100))
-    pygame.display.flip()
-    x += (1 / 29)
+    else:
+        pygame.draw.rect(screen, (255, 215, 0, 255), pygame.Rect(150, display_height * 0.75, (display_width * x) - 300, 100))
+        pygame.display.flip()
+        x += (1 / 29)
 
 current_path = os.path.dirname(__file__)
 icon = pygame.image.load(current_path + '/assets/imgIco.png').convert_alpha()
