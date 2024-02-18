@@ -377,19 +377,6 @@ class UI:
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = True
                             resize_all(list_of_countries)
-                    if event.key == pygame.K_ESCAPE:
-                        screen.fill("black")
-                        current_background.set_alpha(60)
-                        screen.blit(current_background, (0, 0))
-                        pygame.display.flip()
-                        """
-                        ! important !
-                        this lowers the opacity of the background BEFORE opening the menu
-                        this means you do not need to call .set_alpha(60) on each frame
-                        while in the menu, which tanks performance
-                        """
-                        self.current_page = self.menu_settings
-                        return
 
             # fps.render(screen) # uncomment for debugging
             pygame.display.flip()
@@ -583,10 +570,6 @@ class UI:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
                             resize_all(list_of_countries)
-                
-                    if event.key == pygame.K_ESCAPE:
-                        self.current_page = self.game_settings
-                        return
 
             pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
