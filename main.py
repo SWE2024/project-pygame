@@ -638,7 +638,7 @@ class UI:
                                     stack.clear() # unhighlights all areas if owned area clicked twice
 
                                 elif (stack[-1].get_owner() == current_player):
-                                    # switching between unconnected countries
+                                    # not unselecting the country, and not attacking another
                                     for neighbour in graph[stack[-1]]:
                                         neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
                                         screen.blit(neighbour.get_image(), (0, 0))
@@ -653,7 +653,7 @@ class UI:
                                     pass
 
                             except IndexError: 
-                                # nothing is already selected
+                                # nothing is selected
                                 if country.get_colour() == current_player.get_colour():
                                     for neighbour in graph[country]:
                                         if neighbour.get_colour() != current_player.get_colour():
