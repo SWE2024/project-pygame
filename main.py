@@ -14,6 +14,7 @@ pygame.init()
 pygame.mixer.music.set_volume(0.3)
 
 def change_music(music_path):
+    mixer.music.set_volume(0)
     mixer.music.unload()
     mixer.music.load(music_path)
     mixer.music.play(-1)
@@ -636,6 +637,18 @@ class UI:
                                     current_player = switch_player()
                                     stack.clear() # unhighlights all areas if owned area clicked twice
 
+                                elif (stack[-1].get_owner() == current_player) and (country in graph.get(stack[-1])):
+                                    # clicking a neighbouring friendly country
+                                    for neighbour in graph[stack[-1]]:
+                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                    for neighbour in graph[country]:
+                                        if neighbour.get_colour() != current_player.get_colour():
+                                            neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                            screen.blit(neighbour.get_image(), (0, 0))
+                                    stack.pop()
+                                    stack.append(country)
+
                                 elif (stack[-1].get_owner() == current_player) and (country not in graph.get(stack[-1])):
                                     # switching between unconnected countries
                                     for neighbour in graph[stack[-1]]:
@@ -645,6 +658,7 @@ class UI:
                                         if neighbour.get_colour() != current_player.get_colour():
                                             neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
+                                    stack.pop()
                                     stack.append(country)
 
                                 else:
