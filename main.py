@@ -532,7 +532,6 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = False
-                            self.menu.resize_buttons()
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
@@ -546,7 +545,6 @@ class UI:
                             while in the menu, which tanks performance
                             """
                             self.fullscreen = True
-                            self.menu.resize_buttons()
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
