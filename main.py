@@ -616,8 +616,9 @@ class UI:
                     the exact same thing
                     """
                     width, height = screen.get_width(), screen.get_height()
+                    x, y = event.pos[0], event.pos[1]
                     for country in list_of_countries:
-                        if country.get_mask().get_at((event.pos[0], event.pos[1])):
+                        if country.get_mask().get_at((x, y)):
                             try:
                                 if stack[-1] == country:
                                     # clicked the same country
