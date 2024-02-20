@@ -38,7 +38,7 @@ def resize_all(list_of_countries):
         country.set_image(new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
-def fill(country, colour_from, colour_to):
+def country_fill(country, colour_from, colour_to):
     pixel_array = pygame.PixelArray(country)
     pixel_array.replace(colour_from, colour_to)
     return pixel_array.make_surface()
@@ -121,7 +121,7 @@ class Country:
     
     def set_colour(self, colour_from, colour_to, x, y):
         if colour_to.value in list_of_colours:
-            self.image = fill(self.image, colour_from.value, colour_to.value)
+            self.image = country_fill(self.image, colour_from.value, colour_to.value)
             self.set_image(x, y)
             if colour_to == Colour.HIGHLIGHTED:
                 return
