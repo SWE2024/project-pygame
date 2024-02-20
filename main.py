@@ -521,9 +521,6 @@ class UI:
                     if areaAudioBtnPlus.collidepoint(event.pos):
                         mixer.music.set_volume(volume + 0.1)
                         return
-                    #Here to make sure you can set the volume to 0
-                    if volume < 0.1:
-                        mixer.music.set_volume(0)
                     # decrease the volume    
                     if areaAudioBtnMinus.collidepoint(event.pos):
                         mixer.music.set_volume(volume - 0.1)
@@ -725,9 +722,6 @@ class UI:
                     if areaAudioBtnPlus.collidepoint(event.pos):
                         mixer.music.set_volume(volume + 0.1)
                         return
-                    #Here to make sure you can set the volume to 0
-                    if volume < 0.1:
-                        mixer.music.set_volume(0)
                     # decrease the volume    
                     if areaAudioBtnMinus.collidepoint(event.pos):
                         mixer.music.set_volume(volume - 0.1)
