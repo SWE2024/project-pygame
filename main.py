@@ -94,8 +94,9 @@ class Country:
         return self.new_image
     
     def set_image(self, x, y):
-        self.new_image = pygame.transform.scale(self.image.convert_alpha(), (x, y))
-        self.mask = pygame.mask.from_surface(self.new_image)
+        #self.new_image = pygame.transform.scale(self.image.convert_alpha(), (x, y))
+        self.new_image = self.image
+        #self.mask = pygame.mask.from_surface(self.image)
         return
     
     def get_mask(self):
@@ -419,7 +420,7 @@ class UI:
                     if areaPlayBtn.collidepoint(event.pos):
                         sfxPlay.play()
                         self.current_page = self.game
-                        resize_all(list_of_countries)
+                        #resize_all(list_of_countries)
                         volume = mixer.music.get_volume()
                         change_music(current_path + '/assets/music/musicBackground.mp3')
                         mixer.music.set_volume(volume)
@@ -617,8 +618,8 @@ class UI:
                     width, height = screen.get_width(), screen.get_height()
                     x, y = event.pos[0], event.pos[1]
                     for country in list_of_countries:
-                        if country.get_mask().get_at((x, y)):
-                            try:
+                        try:
+                            if country.get_mask().get_at((x, y)):
                                 if stack[-1] == country:
                                     # clicked the same country
                                     for neighbour in graph[country]:
@@ -655,17 +656,17 @@ class UI:
 
                                 else:
                                     pass
-
-                            except IndexError: 
-                                # nothing is selected // passes if not clicking owned territory
-                                if country.get_owner() != current_player:
-                                    pass
-                                else:
-                                    for neighbour in graph[country]:
-                                        if neighbour.get_colour() != current_player.get_colour():
-                                            neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
-                                            screen.blit(neighbour.get_image(), (0, 0))
-                                    stack.append(country)                            
+                                
+                        except IndexError: 
+                            # nothing is selected // passes if not clicking owned territory
+                            if country.get_owner() != current_player:
+                                pass
+                            else:
+                                for neighbour in graph[country]:
+                                    if neighbour.get_colour() != current_player.get_colour():
+                                        neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                        screen.blit(neighbour.get_image(), (0, 0))
+                                stack.append(country)
 
                     if areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.game_settings
@@ -676,11 +677,11 @@ class UI:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
-                            resize_all(list_of_countries)
+                            #resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
-                            resize_all(list_of_countries)
+                            #resize_all(list_of_countries)
 
             pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
@@ -742,11 +743,11 @@ class UI:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
-                            resize_all(list_of_countries)
+                            #resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
-                            resize_all(list_of_countries)
+                            #resize_all(list_of_countries)
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
