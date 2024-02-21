@@ -675,6 +675,10 @@ class UI:
                                 stack.append(country)
 
                         all_valid_countries.clear()
+                    
+                    if areaSettingsBtn.collidepoint(event.pos[0], event.pos[1]):
+                        self.current_page = self.game_settings
+                        return
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == self.fullscreen_key:
@@ -690,10 +694,6 @@ class UI:
                 if event.type == pygame.QUIT:
                     running = False
                     return
-                
-                if areaSettingsBtn.collidepoint(event.pos):
-                        self.current_page = self.game_settings
-                        return
 
             cursor_pos = pygame.mouse.get_pos()
             if areaSettingsBtn.collidepoint(cursor_pos):
