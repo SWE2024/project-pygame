@@ -4,6 +4,8 @@ import os
 from pygame import mixer
 from enum import Enum
 
+from globals import *
+
 """
 INITIALISE
 """
@@ -26,8 +28,7 @@ display_width = display_info.current_w
 display_height = display_info.current_h
 
 def resize_all(list_of_countries):
-    new_width = screen.get_width()
-    new_height = screen.get_height()
+    new_width, new_height = screen.get_width(), screen.get_height()
     screen.fill('black')
     current_ocean = pygame.transform.scale(imgOcean, (new_width, new_height))
     screen.blit(current_ocean, (0, 0))
@@ -35,7 +36,7 @@ def resize_all(list_of_countries):
     screen.blit(current_connections, (0, 0))
 
     for country in list_of_countries:
-        country.set_image(new_width, new_height)
+        country.resize_image(country.get_image(), new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
 def country_fill(country, colour_from, colour_to):
@@ -93,11 +94,17 @@ class Country:
     def get_image(self):
         return self.new_image
     
-    def set_image(self, x, y):
-        #self.new_image = pygame.transform.scale(self.image.convert_alpha(), (x, y))
-        self.new_image = self.image
-        #self.mask = pygame.mask.from_surface(self.image)
+    def set_image(self):
         return
+    
+    def resize_image(self, image, new_width, new_height):
+        if new_width == 2560:
+            return
+        else:
+            self.new_image = pygame.transform.scale(image, (new_width * (self.image.get_width() / 2560), new_height * (self.image.get_height() / 1440)))
+            self.mask = pygame.mask.from_surface(self.new_image)
+            # resizes by a percentage of the previous width and height
+            return
     
     def get_mask(self):
         return self.mask
@@ -120,14 +127,15 @@ class Country:
     def get_colour(self):
         return self.colour
     
-    def set_colour(self, colour_from, colour_to, x, y):
+    def set_colour(self, colour_from, colour_to):
         if colour_to.value in list_of_colours:
-            self.image = country_fill(self.image, colour_from.value, colour_to.value)
-            self.set_image(x, y)
+            self.image_new = country_fill(self.new_image, colour_from.value, colour_to.value)
             if colour_to == Colour.HIGHLIGHTED:
                 return
             else:
                 self.colour = colour_to
+        else:
+            raise Exception('colour doesnt exist')
         return
     
     def get_selected(self):
@@ -412,15 +420,11 @@ class UI:
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    return
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if areaPlayBtn.collidepoint(event.pos):
                         sfxPlay.play()
                         self.current_page = self.game
-                        #resize_all(list_of_countries)
+                        resize_all(list_of_countries)
                         volume = mixer.music.get_volume()
                         change_music(current_path + '/assets/music/musicBackground.mp3')
                         mixer.music.set_volume(volume)
@@ -482,6 +486,10 @@ class UI:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             current_background = pygame.transform.scale(imgBackground, (screen.get_width(), screen.get_height()))
                             self.fullscreen = True
+                
+                if event.type == pygame.QUIT:
+                    running = False
+                    return
 
             # fps.render(screen) # uncomment for debugging
             pygame.display.flip()
@@ -565,7 +573,7 @@ class UI:
             """
             # pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 100, 25))  # prevents FPS values overlapping
             # fps.render(screen) # uncomment for debugging
-            pygame.display.update(pygame.Rect(0, 0, 100, 25))
+            # pygame.display.update(pygame.Rect(0, 0, 100, 25))
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
     def game(self): 
@@ -582,11 +590,11 @@ class UI:
 
         width, height = screen.get_width(), screen.get_height()
 
-        for country in list_of_countries:
+        for country in list_of_countries: # give all countries a random owner
             rnd = random.randint(0, len(list_of_players) - 1)
             owner = list_of_players[rnd]
             country.set_owner(owner)
-            country.set_colour(country.get_colour(), owner.get_colour(), width, height)
+            country.set_colour(country.get_colour(), owner.get_colour())
             screen.blit(country.get_image(), (0, 0))
 
         while 1:
@@ -595,20 +603,7 @@ class UI:
 
             # insert game logic here
 
-            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
-            screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
-
-            cursor_pos = pygame.mouse.get_pos()
-            if areaSettingsBtn.collidepoint(cursor_pos):
-                screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
-
             for event in pygame.event.get():
-
-
-                if event.type == pygame.QUIT:
-                    running = False
-                    return
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     """
                     if you are reading this i apologise in advance
@@ -617,56 +612,62 @@ class UI:
                     """
                     width, height = screen.get_width(), screen.get_height()
                     x, y = event.pos[0], event.pos[1]
+                    all_valid_countries = []
                     for country in list_of_countries:
                         try:
                             if country.get_mask().get_at((x, y)):
-                                if stack[-1] == country:
-                                    # clicked the same country
-                                    for neighbour in graph[country]:
-                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
-                                        screen.blit(neighbour.get_image(), (0, 0))
-                                    stack.clear() # unhighlights all areas if owned area clicked twice
-                                
-                                elif (country.get_colour() != current_player.get_colour()) and (country in graph.get(stack[-1])):
-                                    # attacking a country
-                                    sfxConquer.play()
-                                    country.set_owner(current_player)
-                                    country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour(), width, height)
-                                    for neighbour in graph[stack[-1]]:
-                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
-                                        screen.blit(neighbour.get_image(), (0, 0))
-                                    current_player = switch_player()
-                                    stack.clear() # unhighlights all areas if owned area clicked twice
-                                
-                                elif (country.get_colour() != current_player.get_colour()) and (country not in graph.get(stack[-1])):
-                                    # clicking unowned territory that isnt nearby
+                                all_valid_countries.append(country) # adds the clicked country to a variable
+                                # if this line does not exist you may get an error in the try catch and the loop will not continue
+                        except IndexError: 
+                            pass
+                        
+                        for country in all_valid_countries:
+                            if len(stack) == 0:
+                                # nothing is selected // passes if not clicking owned territory
+                                if country.get_owner() != current_player:
                                     pass
-
-                                elif (stack[-1].get_owner() == current_player):
-                                    # not unselecting the country, and not attacking another
-                                    for neighbour in graph[stack[-1]]:
-                                        neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour(), width, height)
-                                        screen.blit(neighbour.get_image(), (0, 0))
+                                else:
                                     for neighbour in graph[country]:
                                         if neighbour.get_colour() != current_player.get_colour():
-                                            neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                            neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED)
                                             screen.blit(neighbour.get_image(), (0, 0))
-                                    stack.pop()
                                     stack.append(country)
 
-                                else:
-                                    pass
-                                
-                        except IndexError: 
-                            # nothing is selected // passes if not clicking owned territory
-                            if country.get_owner() != current_player:
+                            elif stack[-1] == country:
+                                # clicked the same country
+                                for neighbour in graph[country]:
+                                    neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour())
+                                    screen.blit(neighbour.get_image(), (0, 0))
+                                stack.clear() # unhighlights all areas if owned area clicked twice
+                            
+                            elif (country.get_colour() != current_player.get_colour()) and (country in graph.get(stack[-1])):
+                                # attacking a country
+                                sfxConquer.play()
+                                country.set_owner(current_player)
+                                country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour())
+                                for neighbour in graph[stack[-1]]:
+                                    neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour())
+                                    screen.blit(neighbour.get_image(), (0, 0))
+                                current_player = switch_player()
+                                stack.clear() # unhighlights all areas if owned area clicked twice
+                            
+                            elif (country.get_colour() != current_player.get_colour()) and (country not in graph.get(stack[-1])):
+                                # clicking unowned territory that isnt nearby
                                 pass
-                            else:
+
+                            elif (stack[-1].get_owner() == current_player):
+                                # not unselecting the country, and not attacking another
+                                for neighbour in graph[stack[-1]]:
+                                    neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour())
+                                    screen.blit(neighbour.get_image(), (0, 0))
                                 for neighbour in graph[country]:
                                     if neighbour.get_colour() != current_player.get_colour():
-                                        neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED, width, height)
+                                        neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED)
                                         screen.blit(neighbour.get_image(), (0, 0))
+                                stack.pop()
                                 stack.append(country)
+
+                        all_valid_countries.clear()
 
                     if areaSettingsBtn.collidepoint(event.pos):
                         self.current_page = self.game_settings
@@ -677,11 +678,22 @@ class UI:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
-                            #resize_all(list_of_countries)
+                            resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
-                            #resize_all(list_of_countries)
+                            resize_all(list_of_countries)
+                
+                if event.type == pygame.QUIT:
+                    running = False
+                    return
+            
+            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
+            screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
+
+            cursor_pos = pygame.mouse.get_pos()
+            if areaSettingsBtn.collidepoint(cursor_pos):
+                screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
             pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
@@ -693,31 +705,7 @@ class UI:
         while 1:
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
-            areaAudioBtnPlus = pygame.Rect(screen.get_width() - 289 - 15 + 144.5, 132, 144.5, 90) # +144.5 to make as its half of 289
-            areaAudioBtnMinus = pygame.Rect(screen.get_width() - 289 - 15, 132, 144.5, 90)
-            screen.blit(btnAudio, (screen.get_width() - 289 - 15, 132))
-
-            areaQuitBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
-            screen.blit(btnQuit, (screen.get_width() - 289 - 15, 230))
-
-            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
-            screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
-
-
-            cursor_pos = pygame.mouse.get_pos()
-            if areaAudioBtnPlus.collidepoint(cursor_pos) or areaAudioBtnMinus.collidepoint(cursor_pos):
-                screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
-            elif areaQuitBtn.collidepoint(cursor_pos):
-                screen.blit(btnQuitHover, (screen.get_width() - 289 - 15, 230))
-            elif areaSettingsBtn.collidepoint(cursor_pos):
-                screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
-
-
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    return
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     volume = mixer.music.get_volume()
                     # increase the volume
@@ -738,16 +726,36 @@ class UI:
                         self.current_page = self.game
                         return
 
-                if event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN:
                     if event.key == self.fullscreen_key:
                         if self.fullscreen:
                             screen = pygame.display.set_mode((1280, 720), pygame.RESIZABLE, vsync=0)
                             self.fullscreen = False
-                            #resize_all(list_of_countries)
+                            resize_all(list_of_countries)
                         else:
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, vsync=0)
                             self.fullscreen = True
-                            #resize_all(list_of_countries)
+                            resize_all(list_of_countries)
+                
+                elif event.type == pygame.QUIT:
+                    running = False
+                    return
+                
+                screen.blit(btnAudio, (screen.get_width() - 289 - 15, 132))
+                screen.blit(btnQuit, (screen.get_width() - 289 - 15, 230))
+                screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
+
+                cursor_pos = event.pos
+                areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
+                areaAudioBtnPlus = pygame.Rect(screen.get_width() - 289 - 15 + 144.5, 132, 144.5, 90) # +144.5 to make as its half of 289
+                areaAudioBtnMinus = pygame.Rect(screen.get_width() - 289 - 15, 132, 144.5, 90)
+                areaQuitBtn = pygame.Rect(screen.get_width() - 289 - 15, 230, 289, 90)
+                if areaAudioBtnPlus.collidepoint(cursor_pos) or areaAudioBtnMinus.collidepoint(cursor_pos):
+                    screen.blit(btnAudioHover, (screen.get_width() - 289 - 15, 132))
+                elif areaQuitBtn.collidepoint(cursor_pos):
+                    screen.blit(btnQuitHover, (screen.get_width() - 289 - 15, 230))
+                elif areaSettingsBtn.collidepoint(cursor_pos):
+                    screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
             """
             render only the button area, to improve performance and reduce unnecessary rendering
