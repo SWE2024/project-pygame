@@ -98,7 +98,7 @@ class Country:
         return
     
     def resize_image(self, new_width, new_height):
-        self.scaled_image = pygame.transform.scale(self.scaled_image, (new_width * (self.image.get_width() / 2560), new_height * (self.image.get_height() / 1440)))
+        self.scaled_image = pygame.transform.scale(self.image, (new_width * (self.image.get_width() / 2560), new_height * (self.image.get_height() / 1440)))
         self.mask = pygame.mask.from_surface(self.scaled_image)
         # resizes by a percentage of the previous width and height
         return
@@ -126,7 +126,7 @@ class Country:
     
     def set_colour(self, colour_from, colour_to):
         if colour_to.value in list_of_colours:
-            self.scaled_image = country_fill(self.scaled_image, colour_from.value, colour_to.value)
+            self.image = country_fill(self.image, colour_from.value, colour_to.value)
             if colour_to == Colour.HIGHLIGHTED:
                 return
             else:
@@ -592,6 +592,7 @@ class UI:
             owner = list_of_players[rnd]
             country.set_owner(owner)
             country.set_colour(country.get_colour(), owner.get_colour())
+            country.resize_image(width, height)
             screen.blit(country.get_image(), (0, 0))
 
         while 1:
@@ -627,6 +628,7 @@ class UI:
                                     for neighbour in graph[country]:
                                         if neighbour.get_colour() != current_player.get_colour():
                                             neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED)
+                                            neighbour.resize_image(width, height)
                                             screen.blit(neighbour.get_image(), (0, 0))
                                     stack.append(country)
 
@@ -634,6 +636,7 @@ class UI:
                                 # clicked the same country
                                 for neighbour in graph[country]:
                                     neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour())
+                                    neighbour.resize_image(width, height)
                                     screen.blit(neighbour.get_image(), (0, 0))
                                 stack.clear() # unhighlights all areas if owned area clicked twice
                             
@@ -642,8 +645,10 @@ class UI:
                                 sfxConquer.play()
                                 country.set_owner(current_player)
                                 country.set_colour(Colour.HIGHLIGHTED, current_player.get_colour())
+                                country.resize_image(width, height)
                                 for neighbour in graph[stack[-1]]:
                                     neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour())
+                                    neighbour.resize_image(width, height)
                                     screen.blit(neighbour.get_image(), (0, 0))
                                 current_player = switch_player()
                                 stack.clear() # unhighlights all areas if owned area clicked twice
@@ -656,10 +661,12 @@ class UI:
                                 # not unselecting the country, and not attacking another
                                 for neighbour in graph[stack[-1]]:
                                     neighbour.set_colour(Colour.HIGHLIGHTED, neighbour.get_colour())
+                                    neighbour.resize_image(width, height)
                                     screen.blit(neighbour.get_image(), (0, 0))
                                 for neighbour in graph[country]:
                                     if neighbour.get_colour() != current_player.get_colour():
                                         neighbour.set_colour(neighbour.get_colour(), Colour.HIGHLIGHTED)
+                                        neighbour.resize_image(width, height)
                                         screen.blit(neighbour.get_image(), (0, 0))
                                 stack.pop()
                                 stack.append(country)
