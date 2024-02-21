@@ -94,7 +94,7 @@ class Country:
         return self.new_image
     
     def set_image(self, x, y):
-        self.new_image = pygame.transform.scale(self.image, (x, y))
+        self.new_image = pygame.transform.scale(self.image.convert_alpha(), (x, y))
         self.mask = pygame.mask.from_surface(self.new_image)
         return
     
@@ -567,7 +567,7 @@ class UI:
             pygame.display.update(pygame.Rect(0, 0, 100, 25))
             pygame.display.update(pygame.Rect(screen.get_width() - 289 - 10, 0, 304, 332))
 
-    def game(self):
+    def game(self): 
         global running, screen, current_player
 
         """
@@ -602,6 +602,8 @@ class UI:
                 screen.blit(btnSettingsHover, (screen.get_width() - 144 - 10, 10))
 
             for event in pygame.event.get():
+
+
                 if event.type == pygame.QUIT:
                     running = False
                     return
@@ -682,7 +684,6 @@ class UI:
 
             pygame.draw.rect(screen, (0, 0, 0, 255), pygame.Rect(0, 0, 150, 40))  # prevents FPS values overlapping
             fps.render(screen) # uncomment for debugging
-            pygame.display.update(pygame.Rect(0, 0, 150, 40))
             pygame.display.flip()
     
     def game_settings(self):
