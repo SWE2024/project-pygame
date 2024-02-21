@@ -599,6 +599,9 @@ class UI:
             # screen.fill("black") # comment out if you need to do something else
             dt = clock.tick(165) * 0.001  # limit fps to 165 in game
 
+            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
+            screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
+
             # insert game logic here
 
             for event in pygame.event.get():
@@ -673,10 +676,6 @@ class UI:
 
                         all_valid_countries.clear()
 
-                    if areaSettingsBtn.collidepoint(event.pos):
-                        self.current_page = self.game_settings
-                        return
-
                 if event.type == pygame.KEYDOWN:
                     if event.key == self.fullscreen_key:
                         if self.fullscreen:
@@ -691,9 +690,10 @@ class UI:
                 if event.type == pygame.QUIT:
                     running = False
                     return
-            
-            areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
-            screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
+                
+                if areaSettingsBtn.collidepoint(event.pos):
+                        self.current_page = self.game_settings
+                        return
 
             cursor_pos = pygame.mouse.get_pos()
             if areaSettingsBtn.collidepoint(cursor_pos):
