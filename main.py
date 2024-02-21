@@ -36,7 +36,7 @@ def resize_all(list_of_countries):
     screen.blit(current_connections, (0, 0))
 
     for country in list_of_countries:
-        country.resize_image(country.get_image(), new_width, new_height)
+        country.resize_image(new_width, new_height)
         screen.blit(country.get_image(), (0, 0))
 
 def country_fill(country, colour_from, colour_to):
@@ -84,7 +84,7 @@ class Country:
         self.id = id
         self.name = name
         self.image = image # this should be pygame.image.load(current_path + '/assets/countries/countryname.png').convert_alpha()
-        self.new_image = image
+        self.scaled_image = image
         self.mask = pygame.mask.from_surface(self.image)
         self.owner = owner
     
@@ -92,19 +92,16 @@ class Country:
         return self.name
     
     def get_image(self):
-        return self.new_image
+        return self.scaled_image
     
     def set_image(self):
         return
     
-    def resize_image(self, image, new_width, new_height):
-        if new_width == 2560:
-            return
-        else:
-            self.new_image = pygame.transform.scale(image, (new_width * (self.image.get_width() / 2560), new_height * (self.image.get_height() / 1440)))
-            self.mask = pygame.mask.from_surface(self.new_image)
-            # resizes by a percentage of the previous width and height
-            return
+    def resize_image(self, new_width, new_height):
+        self.scaled_image = pygame.transform.scale(self.scaled_image, (new_width * (self.image.get_width() / 2560), new_height * (self.image.get_height() / 1440)))
+        self.mask = pygame.mask.from_surface(self.scaled_image)
+        # resizes by a percentage of the previous width and height
+        return
     
     def get_mask(self):
         return self.mask
@@ -129,7 +126,7 @@ class Country:
     
     def set_colour(self, colour_from, colour_to):
         if colour_to.value in list_of_colours:
-            self.image_new = country_fill(self.new_image, colour_from.value, colour_to.value)
+            self.scaled_image = country_fill(self.scaled_image, colour_from.value, colour_to.value)
             if colour_to == Colour.HIGHLIGHTED:
                 return
             else:
