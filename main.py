@@ -749,7 +749,7 @@ class UI:
                 screen.blit(btnQuit, (screen.get_width() - 289 - 15, 230))
                 screen.blit(btnSettings, (screen.get_width() - 144 - 10, 10))
 
-                cursor_pos = event.pos
+                cursor_pos = pygame.mouse.get_pos()
                 areaSettingsBtn = pygame.Rect(screen.get_width() - 144 - 10, 10, 144, 122)  # offset 10px from the edge of the screen
                 areaAudioBtnPlus = pygame.Rect(screen.get_width() - 289 - 15 + 144.5, 132, 144.5, 90) # +144.5 to make as its half of 289
                 areaAudioBtnMinus = pygame.Rect(screen.get_width() - 289 - 15, 132, 144.5, 90)
