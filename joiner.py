@@ -1,7 +1,9 @@
 import asyncio
 import sys
-from ip import *
+from ip import port
 from concurrent.futures import ThreadPoolExecutor
+
+ip = 'enter.server.port.here'
 
 async def ainput() -> str:
     with ThreadPoolExecutor(1, "AsyncInput") as executor:
@@ -16,7 +18,7 @@ async def send_data(writer, name):
             data += b' ' * (1024 - len(data))
             writer.write(data)
             await writer.drain()
-            await asyncio.sleep(1)
+            await asyncio.sleep(1/12)
             # print("drained properly")
         except KeyboardInterrupt as err:
             writer.write("!disconnect".encode())
