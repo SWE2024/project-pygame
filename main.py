@@ -442,6 +442,7 @@ class UI:
                         """
                         self.current_page = self.menu_settings
                         return
+                    """
                     elif areaMap1Btn.collidepoint(event.pos):
                         print('clicked map 1')
                         map_number = 1
@@ -449,12 +450,12 @@ class UI:
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
                         pygame.display.flip()
-                        """
+                        
                         ! important !
                         this lowers the opacity of the background BEFORE opening the menu
                         this means you do not need to call .set_alpha(60) on each frame
                         while in the menu, which tanks performance
-                        """
+                        
                         self.current_page = self.menu_settings
                         return
                     elif areaMap2Btn.collidepoint(event.pos):
@@ -464,14 +465,15 @@ class UI:
                         current_background.set_alpha(60)
                         screen.blit(current_background, (0, 0))
                         pygame.display.flip()
-                        """
+                        
                         ! important !
                         this lowers the opacity of the background BEFORE opening the menu
                         this means you do not need to call .set_alpha(60) on each frame
                         while in the menu, which tanks performance
-                        """
+                        
                         self.current_page = self.menu_settings
                         return
+                    """
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == self.fullscreen_key:
