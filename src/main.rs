@@ -1,9 +1,8 @@
-use std::io::{Bytes, ErrorKind, Read, Write};
-use std::time::Duration;
-use std::{mem, thread};
-use std::net::{IpAddr, TcpListener, TcpStream};
+use std::io::{ErrorKind, Read, Write};
+use std:: thread;
+use std::net::{TcpListener, TcpStream};
 use std::sync::{Mutex, Arc};
-use std::borrow::{Borrow, Cow};
+use std::borrow::Cow;
 use std::net::SocketAddr;
 
 
@@ -45,7 +44,7 @@ fn main() {
 
 
 
-        let worker = thread::spawn( move || {
+        let _worker = thread::spawn( move || {
             handle_client(socket, thread_vec, thread_soc_lock, thread_print_lock)
         });
         
@@ -117,7 +116,7 @@ fn broadcast(members_vec: Arc<Mutex<Vec<TcpStream>>>, socket_lock: Arc<Mutex<()>
 }
 
 
-fn handle_client(mut socket: TcpStream, mut members_vec: Arc<Mutex<Vec<TcpStream>>>, socket_lock: Arc<Mutex<()>>, print_lock: Arc<Mutex<()>>) {
+fn handle_client(mut socket: TcpStream, members_vec: Arc<Mutex<Vec<TcpStream>>>, socket_lock: Arc<Mutex<()>>, print_lock: Arc<Mutex<()>>) {
     socket.set_nonblocking(true).expect("failed to set non-blocking mode");
     loop {
         let data: [u8; 1024];
